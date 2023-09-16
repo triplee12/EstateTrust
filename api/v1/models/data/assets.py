@@ -1,8 +1,9 @@
 #!/usr/bin/python3
 """Assets models for estate planning software."""
 
+from re import L
 from sqlalchemy import (
-    Column, String, DateTime,
+    Column, String, DateTime, Text,
     TIMESTAMP, ForeignKey, text
 )
 from sqlalchemy.orm import relationship
@@ -41,6 +42,7 @@ class Asset(Base):
         "Beneficiary", back_populates="assets",
         foreign_keys=[will_to]
     )
+    note = Column(Text(length=150), nullable=True)
     created_at = Column(
         TIMESTAMP(timezone=True),
         nullable=False,
@@ -86,6 +88,7 @@ class Monetary(Base):
         "Beneficiary", back_populates="money",
         foreign_keys=[will_to]
     )
+    note = Column(Text(length=150), nullable=True)
     created_at = Column(
         TIMESTAMP(timezone=True),
         nullable=False,
