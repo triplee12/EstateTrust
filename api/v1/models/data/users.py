@@ -2,7 +2,7 @@
 """Users models for estate planning software."""
 
 from sqlalchemy import (
-    Column, String, DateTime, Enum,
+    Column, String, DateTime, Enum, Text,
     TIMESTAMP, ForeignKey, text, Date
 )
 from sqlalchemy.orm import relationship
@@ -150,6 +150,7 @@ class Trustee(Base):
         "User", back_populates="executor",
         foreign_keys=[added_by]
     )
+    note = Column(Text(length=150), nullable=True)
     created_at = Column(
         TIMESTAMP(timezone=True),
         nullable=False,
