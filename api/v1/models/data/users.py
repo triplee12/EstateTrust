@@ -88,7 +88,7 @@ class Beneficiary(Base):
             "brother", "sister", "son", "daughter",
             "wife", "husband", "stepson", "stepdaughter",
             "grandchild", "cousin", "nephew", "friend",
-            "father", "mother", "inlaw"
+            "father", "mother", "inlaw",
             name="rela_enum",
             create_type=False
         ), nullable=False
