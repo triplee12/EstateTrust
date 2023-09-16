@@ -86,9 +86,9 @@ class Beneficiary(Base):
     relation = Column(
         Enum(
             "brother", "sister", "son", "daughter",
-            "wife", "husband", "stepSon", "stepDaughter",
-            "grandChild", "cousin", "nephew", "secondWife",
-            "thirdWife", "fouthWife", "fiftyWife", "friend",
+            "wife", "husband", "stepson", "stepdaughter",
+            "grandchild", "cousin", "nephew", "friend",
+            "father", "mother", "inlaw",
             name="rela_enum",
             create_type=False
         ), nullable=False
