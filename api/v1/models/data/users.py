@@ -7,7 +7,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
-from configurations.database import Base
+from v1.configurations.database import Base
 
 # PostgreSQL UUID type
 PgUUID = UUID(as_uuid=False)
@@ -19,7 +19,7 @@ class User(Base):
     __tablename__: str = 'users'
     # Generate random UUID primary key column
     uuid_pk = Column(
-        "id", PgUUID, primary_key=True,
+        PgUUID, primary_key=True,
         server_default=text("gen_random_uuid()")
     )
     username = Column(String(10), nullable=False)
@@ -64,9 +64,9 @@ class User(Base):
 class Beneficiary(Base):
     """Beneficiary model."""
 
-    __tablename__: str = 'Beneficiaries'
+    __tablename__: str = 'beneficiaries'
     uuid_pk = Column(
-        "id", PgUUID, primary_key=True,
+        PgUUID, primary_key=True,
         server_default=text("gen_random_uuid()")
     )
     first_name = Column(String(50), nullable=False)
@@ -78,7 +78,7 @@ class Beneficiary(Base):
             "wife", "husband", "stepSon", "stepDaughter",
             "grandChild", "cousin", "nephew", "secondWife",
             "thirdWife", "fouthWife", "fiftyWife", "friend",
-            name="gender_enum",
+            name="rela_enum",
             create_type=False
         ), nullable=False
     )
@@ -102,7 +102,7 @@ class Beneficiary(Base):
     )
 
     def __str__(self):
-        """String representation of beneficiary."""
+        """Beneficiary representation."""
         return f"{self.first_name} - {self.last_name}"
 
 
@@ -111,10 +111,10 @@ class Trustee(Base):
 
     __tablename__: str = 'trustee'
     uuid_pk = Column(
-        "id", PgUUID, primary_key=True,
+        PgUUID, primary_key=True,
         server_default=text("gen_random_uuid()")
     )
-    username = Column(String(50), nullable=False)
+    username = Column(String(10), nullable=False)
     first_name = Column(String(50), nullable=False)
     middle_name = Column(String(50), nullable=False)
     last_name = Column(String(50), nullable=False)
@@ -145,5 +145,5 @@ class Trustee(Base):
     )
 
     def __str__(self):
-        """String representation of beneficiary."""
+        """Trustee representation."""
         return f"{self.username} - {self.first_name} - {self.last_name}"
