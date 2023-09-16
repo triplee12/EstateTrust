@@ -22,10 +22,13 @@ class User(Base):
         PgUUID, primary_key=True,
         server_default=text("gen_random_uuid()")
     )
-    username = Column(String(10), nullable=False)
+    username = Column(String(10), nullable=False, unique=True)
     first_name = Column(String(50), nullable=False)
     middle_name = Column(String(50), nullable=False)
     last_name = Column(String(50), nullable=False)
+    email = Column(String(150), nullable=False, unique=True)
+    phone_number = Column(String(50), nullable=False, unique=True)
+    password = Column(String(50), nullable=False)
     date_of_birth = Column(Date, nullable=False)
     gender = Column(
         Enum(
@@ -38,7 +41,7 @@ class User(Base):
         "Beneficiary", back_populates="user",
         foreign_keys="Beneficiary.uuid_pk"
     )
-    executor = relationship(
+    executors = relationship(
         "Trustee", back_populates="user",
         foreign_keys="Trustee.uuid_pk"
     )
@@ -46,7 +49,7 @@ class User(Base):
         "Asset", back_populates="owner",
         foreign_keys="Asset.uuid_pk"
     )
-    monetary = relationship(
+    monetaries = relationship(
         "Monetary", back_populates="owner",
         foreign_keys="Monetary.uuid_pk"
     )
@@ -130,11 +133,14 @@ class Trustee(Base):
         PgUUID, primary_key=True,
         server_default=text("gen_random_uuid()")
     )
-    username = Column(String(10), nullable=False)
+    username = Column(String(10), nullable=False, unique=True)
     first_name = Column(String(50), nullable=False)
     middle_name = Column(String(50), nullable=False)
     last_name = Column(String(50), nullable=False)
-    executor = Column(
+    email = Column(String(150), nullable=False)
+    phone_number = Column(String(50), nullable=False)
+    password = Column(String(50), nullable=False)
+    relation = Column(
         Enum(
             "brother", "sister", "friend", "lawyer",
             name="executor_enum",
