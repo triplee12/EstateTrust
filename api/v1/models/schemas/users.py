@@ -25,13 +25,14 @@ class BeneficiaryEnum(str, Enum):
     FATHER = "father"
     FRIEND = "friend"
     GRAND_CHILD = "grandchild"
+    HUSBAND = "husband"
     INLAW = "inlaw"
     MOTHER = "mother"
     NEPHEW = "nephew"
     SISTER = "sister"
     SON = "son"
-    STEP_SON = "step_son"
-    STEP_DAUGHTER = "step_daughter"
+    STEP_SON = "stepson"
+    STEP_DAUGHTER = "stepdaughter"
     WIFE = "wife"
 
 
