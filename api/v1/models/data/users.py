@@ -42,6 +42,14 @@ class User(Base):
         "Trustee", back_populates="user",
         foreign_keys="Trustee.uuid_pk"
     )
+    assets = relationship(
+        "Asset", back_populates="owner",
+        foreign_keys="Asset.uuid_pk"
+    )
+    monetary = relationship(
+        "Monetary", back_populates="owner",
+        foreign_keys="Monetary.uuid_pk"
+    )
     created_at = Column(
         TIMESTAMP(timezone=True),
         nullable=False,
@@ -90,6 +98,14 @@ class Beneficiary(Base):
     user = relationship(
         "User", back_populates="beneficiaries",
         foreign_keys=[added_by]
+    )
+    assets = relationship(
+        "Asset", back_populates="beneficiary",
+        foreign_keys="Asset.uuid_pk"
+    )
+    money = relationship(
+        "Monetary", back_populates="beneficiary",
+        foreign_keys="Monetary.uuid_pk"
     )
     created_at = Column(
         TIMESTAMP(timezone=True),
