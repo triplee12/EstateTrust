@@ -7,7 +7,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
-from v1.configurations.database import Base
+from api.v1.configurations.database import Base
 
 # PostgreSQL UUID type
 PgUUID = UUID(as_uuid=False)
@@ -156,7 +156,7 @@ class Trustee(Base):
         "User", back_populates="executor",
         foreign_keys=[added_by]
     )
-    note = Column(Text(length=150), nullable=True)
+    note = Column(Text, nullable=True)
     created_at = Column(
         TIMESTAMP(timezone=True),
         nullable=False,

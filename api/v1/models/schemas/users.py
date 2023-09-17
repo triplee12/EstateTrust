@@ -6,6 +6,7 @@ from enum import Enum
 from uuid import UUID
 from typing import List, Optional
 from pydantic import BaseModel, EmailStr
+from .assets import AssetRes, MonetaryRes
 
 
 class Gender(str, Enum):
@@ -162,8 +163,8 @@ class ListUsers(BaseModel):
     updated_at: datetime
     beneficiaries: List[BeneficiaryRes]
     executors: List[TrusteeRes]
-    # assets: List[AssetRes]
-    # monetaries: List[MonetaryRes]
+    assets: List[AssetRes]
+    monetaries: List[MonetaryRes]
 
     class Config:
         """Serialiser configuration."""
