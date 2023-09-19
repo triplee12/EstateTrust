@@ -71,7 +71,7 @@ class TrusteeRepository:
     def update_trustee(self, user_id: UUID, trustee_id: UUID, data) -> bool:
         """
         Update a trustee data.
-    
+
         Args:
             user_id (UUID): The identifier of the user that added the trustee
             trustee_id (UUID): The identifier of the trustee to update
