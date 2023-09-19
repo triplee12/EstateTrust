@@ -39,7 +39,7 @@ class User(Base):
     )
     beneficiaries = relationship(
         "Beneficiary", back_populates="user",
-        foreign_keys="Beneficiary.uuid_pk"
+        foreign_keys=["Beneficiary.uuid_pk"]
     )
     executors = relationship(
         "Trustee", back_populates="user",
@@ -100,15 +100,15 @@ class Beneficiary(Base):
     )
     user = relationship(
         "User", back_populates="beneficiaries",
-        foreign_keys=[added_by]
+        foreign_keys=added_by
     )
     assets = relationship(
         "Asset", back_populates="beneficiary",
-        foreign_keys="Asset.uuid_pk"
+        foreign_keys=["Asset.uuid_pk"]
     )
     money = relationship(
         "Monetary", back_populates="beneficiary",
-        foreign_keys="Monetary.uuid_pk"
+        foreign_keys=["Monetary.uuid_pk"]
     )
     created_at = Column(
         TIMESTAMP(timezone=True),
