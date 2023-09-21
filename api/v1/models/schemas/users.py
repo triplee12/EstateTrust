@@ -147,7 +147,7 @@ class TrusteeRes(BaseModel):
         orm_mode = True
 
 
-class ListUsers(BaseModel):
+class UserRes(BaseModel):
     """Return all the users in the database."""
 
     uuid_pk: str
@@ -160,7 +160,7 @@ class ListUsers(BaseModel):
     date_of_birth: date
     gender: str
     created_at: datetime
-    updated_at: datetime
+    # updated_at: datetime
     beneficiaries: List[BeneficiaryRes]
     executors: List[TrusteeRes]
     assets: List[AssetRes]
@@ -205,6 +205,7 @@ class UpdateUser(BaseModel):
     middle_name: Optional[str]
     date_of_birth: Optional[date]
     gender: Optional[Gender]
+    updated_at: str = datetime.now()
 
 
 class UpdateTrustee(BaseModel):
