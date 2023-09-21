@@ -80,7 +80,7 @@ class Monetary(Base):
         nullable=False
     )
     owner = relationship(
-        "User", back_populates="monetary",
+        "User", back_populates="monetaries",
         foreign_keys=[owner_id]
     )
     beneficiary = relationship(

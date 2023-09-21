@@ -117,7 +117,7 @@ def verify_token(token: str, credentials_exception):
     """Verify access token provided by user."""
     try:
         decoded_jwt = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id: str = decoded_jwt.get("id")
+        user_id: str = decoded_jwt.get("uuid_pk")
         if user_id is None:
             raise credentials_exception
         token_data = TokenData(uuid_pk=user_id)
@@ -140,13 +140,14 @@ def get_current_user(
     )
 
     user = verify_token(token, credentials_exception)
-    try:
-        query = session.query(User).filter(
-            User.uuid_pk == user.id
-        ).first()
+    print(user)
+    query = session.query(User).filter(
+        User.uuid_pk == user.uuid_pk
+    ).first()
+    if query:
         return query
-    except DataError:
+    else:
         trustee = session.query(Trustee).filter(
-            Trustee.uuid_pk == user.id
+            Trustee.uuid_pk == user.uuid_pk
         ).first()
         return trustee

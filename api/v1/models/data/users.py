@@ -28,7 +28,7 @@ class User(Base):
     last_name = Column(String(50), nullable=False)
     email = Column(String(150), nullable=False, unique=True)
     phone_number = Column(String(50), nullable=False, unique=True)
-    password = Column(String(50), nullable=False)
+    password = Column(String(255), nullable=False)
     date_of_birth = Column(Date, nullable=False)
     gender = Column(
         Enum(
@@ -38,20 +38,16 @@ class User(Base):
         ), nullable=False
     )
     beneficiaries = relationship(
-        "Beneficiary", back_populates="user",
-        foreign_keys=["Beneficiary.uuid_pk"]
+        "Beneficiary", back_populates="user"
     )
     executors = relationship(
-        "Trustee", back_populates="user",
-        foreign_keys="Trustee.uuid_pk"
+        "Trustee", back_populates="user"
     )
     assets = relationship(
-        "Asset", back_populates="owner",
-        foreign_keys="Asset.uuid_pk"
+        "Asset", back_populates="owner"
     )
     monetaries = relationship(
-        "Monetary", back_populates="owner",
-        foreign_keys="Monetary.uuid_pk"
+        "Monetary", back_populates="owner"
     )
     created_at = Column(
         TIMESTAMP(timezone=True),
@@ -103,12 +99,10 @@ class Beneficiary(Base):
         foreign_keys=added_by
     )
     assets = relationship(
-        "Asset", back_populates="beneficiary",
-        foreign_keys=["Asset.uuid_pk"]
+        "Asset", back_populates="beneficiary"
     )
     money = relationship(
-        "Monetary", back_populates="beneficiary",
-        foreign_keys=["Monetary.uuid_pk"]
+        "Monetary", back_populates="beneficiary"
     )
     created_at = Column(
         TIMESTAMP(timezone=True),
@@ -128,7 +122,7 @@ class Beneficiary(Base):
 class Trustee(Base):
     """User trustee model."""
 
-    __tablename__: str = 'trustee'
+    __tablename__: str = 'trustees'
     uuid_pk = Column(
         PgUUID, primary_key=True,
         server_default=text("gen_random_uuid()")
@@ -139,7 +133,7 @@ class Trustee(Base):
     last_name = Column(String(50), nullable=False)
     email = Column(String(150), nullable=False)
     phone_number = Column(String(50), nullable=False)
-    password = Column(String(50), nullable=False)
+    password = Column(String(255), nullable=False)
     relation = Column(
         Enum(
             "brother", "sister", "friend", "lawyer",
@@ -153,7 +147,7 @@ class Trustee(Base):
         nullable=False
     )
     user = relationship(
-        "User", back_populates="executor",
+        "User", back_populates="executors",
         foreign_keys=[added_by]
     )
     note = Column(Text, nullable=True)
