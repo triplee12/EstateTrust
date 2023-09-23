@@ -3,17 +3,15 @@
 
 from typing import List
 from uuid import UUID
-from fastapi import Depends
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import DataError, IntegrityError
-from api.v1.configurations.database import get_db
 from api.v1.models.data.users import Trustee, User
 
 
 class TrusteeRepository:
     """Trustee repository."""
 
-    def __init__(self, sess: Session = Depends(get_db)) -> None:
+    def __init__(self, sess: Session) -> None:
         """Initialize the trustee repository."""
         self.sess: Session = sess
 
@@ -27,7 +25,7 @@ class TrusteeRepository:
             Return True if successful, False otherwise
         """
         try:
-            trustee = Trustee(**data)
+            trustee = Trustee(**data.dict())
             self.sess.add(trustee)
             self.sess.commit()
             return True
@@ -68,7 +66,7 @@ class TrusteeRepository:
         truestees = user.executors
         return truestees
 
-    def update_trustee(self, user_id: UUID, trustee_id: UUID, data) -> bool:
+    def update_trustee(self, user_id: UUID, trustee_id: UUID, data):
         """
         Update a trustee data.
 
@@ -85,9 +83,9 @@ class TrusteeRepository:
                 added_by=user_id
             )
             if trustee.first():
-                trustee.update(**data)
+                trustee.update(data.dict(), synchronize_session=False)
                 self.sess.commit()
-                return True
+                return trustee.first()
             return False
         except IntegrityError:
             return False
