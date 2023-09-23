@@ -7,6 +7,7 @@ from api.v1.configurations.database import engine
 from api.v1.models.data.users import Base as UserBase
 from api.v1.models.data.assets import Base as AssetBase
 from api.v1.routes.users import user_routers
+from api.v1.routes.trustees import trustee_router
 
 UserBase.metadata.create_all(bind=engine)
 AssetBase.metadata.create_all(bind=engine)
@@ -35,3 +36,4 @@ async def index() -> dict[str, str]:
 
 
 app.include_router(user_routers)
+app.include_router(trustee_router)

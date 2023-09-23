@@ -99,6 +99,7 @@ class AddTrustee(BaseUser):
     phone_number: str
     password: str
     relation: TrusteeEnum
+    added_by: Optional[str] = ""
     note: Optional[str]
 
 
@@ -138,8 +139,9 @@ class TrusteeRes(BaseModel):
     email: EmailStr
     phone_number: str
     relation: str
+    beneficiaries: List[BeneficiaryRes]
     created_at: datetime
-    updated_at: datetime
+    # updated_at: datetime
 
     class Config:
         """Serialiser configuration."""
@@ -216,6 +218,7 @@ class UpdateTrustee(BaseModel):
     middle_name: Optional[str]
     relation: Optional[TrusteeEnum]
     note: Optional[str]
+    updated_at: str = datetime.now()
 
 
 class UpdateBeneficiary(BaseModel):
