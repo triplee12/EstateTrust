@@ -10,6 +10,7 @@ from api.v1.routes.users import user_routers
 from api.v1.routes.trustees import trustee_router
 from api.v1.routes.beneficiaries import beneficiary_router
 from api.v1.routes.assets import asset_router
+from api.v1.routes.monetaries import monetary_router
 
 UserBase.metadata.create_all(bind=engine)
 AssetBase.metadata.create_all(bind=engine)
@@ -41,3 +42,4 @@ app.include_router(user_routers)
 app.include_router(trustee_router)
 app.include_router(beneficiary_router)
 app.include_router(asset_router)
+app.include_router(monetary_router)
