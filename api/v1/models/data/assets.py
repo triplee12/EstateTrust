@@ -22,7 +22,7 @@ class Asset(Base):
         server_default=text("gen_random_uuid()")
     )
     name = Column(String(255), nullable=False)
-    loaction = Column(String(255), nullable=True)
+    location = Column(String(255), nullable=True)
     owner_id = Column(
         PgUUID,
         ForeignKey("users.uuid_pk", ondelete="CASCADE"),
