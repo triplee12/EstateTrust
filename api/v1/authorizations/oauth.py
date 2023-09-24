@@ -140,7 +140,6 @@ def get_current_user(
     )
 
     user = verify_token(token, credentials_exception)
-    print(user)
     query = session.query(User).filter(
         User.uuid_pk == user.uuid_pk
     ).first()
