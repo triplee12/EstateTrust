@@ -3,10 +3,8 @@
 
 from typing import List
 from uuid import UUID
-from fastapi import Depends
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import DataError
-from api.v1.configurations.database import get_db
 from api.v1.models.data.users import Beneficiary, User
 from api.v1.models.data.assets import Asset
 
@@ -14,13 +12,13 @@ from api.v1.models.data.assets import Asset
 class AssetRepository:
     """Assets repository."""
 
-    def __init__(self, sess: Session = Depends(get_db)) -> None:
+    def __init__(self, sess: Session) -> None:
         """Initialize the repository."""
         self.sess: Session = sess
 
     def add_asset(self, data) -> bool:
         """Add an asset."""
-        asset = Asset(**data)
+        asset = Asset(**data.dict())
         self.sess.add(asset)
         self.sess.commit()
         if asset:
@@ -107,9 +105,9 @@ class AssetRepository:
                 owner_id=user_id
             )
             if asset.first():
-                asset.update(**data)
+                asset.update(data.dict(), synchronize_session=False)
                 self.sess.commit()
-                return True
+                return asset.first()
             return None
         except DataError:
             return None

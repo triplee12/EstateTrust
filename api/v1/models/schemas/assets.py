@@ -2,7 +2,6 @@
 """Assets schemas for Estate Trust."""
 
 from datetime import datetime
-from uuid import UUID
 from typing import Optional
 from pydantic import BaseModel
 
@@ -11,8 +10,9 @@ class AddAsset(BaseModel):
     """Create physical asset."""
 
     name: str
-    location: Optional[str]
-    will_to: UUID
+    location: Optional[str] = ""
+    owner_id: Optional[str] = ""
+    will_to: str
     note: Optional[str]
 
 
@@ -23,7 +23,8 @@ class AddMonetary(BaseModel):
     acc_number: str
     amount: str
     bank_name: str
-    will_to: UUID
+    owner_id: Optional[str] = ""
+    will_to: str
     note: Optional[str]
 
 
@@ -37,7 +38,7 @@ class AssetRes(BaseModel):
     will_to: str
     note: str
     created_at: datetime
-    updated_at: datetime
+    # updated_at: datetime
 
     class Config:
         """Serialiser configuration."""
@@ -53,10 +54,11 @@ class MonetaryRes(BaseModel):
     acc_number: str
     amount: str
     bank_name: str
+    owner_id: str
     will_to: str
     note: str
     created_at: datetime
-    updated_at: datetime
+    # updated_at: datetime
 
     class Config:
         """Serialiser configuration."""
@@ -69,8 +71,9 @@ class UpdateAsset(BaseModel):
 
     name: Optional[str]
     location: Optional[str]
-    will_to: Optional[UUID]
+    will_to: Optional[str]
     note: Optional[str]
+    updated_at: str = datetime.now()
 
 
 class UpdateMonetary(BaseModel):
@@ -80,5 +83,6 @@ class UpdateMonetary(BaseModel):
     acc_number: Optional[str]
     amount: Optional[str]
     bank_name: Optional[str]
-    will_to: Optional[UUID]
+    will_to: Optional[str]
     note: Optional[str]
+    updated_at: str = datetime.now()
