@@ -3,23 +3,21 @@
 
 from typing import List
 from uuid import UUID
-from fastapi import Depends
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import DataError
-from api.v1.configurations.database import get_db
 from api.v1.models.data.users import Beneficiary, User
 
 
 class BeneficiaryRepo:
     """Beneficiary repository."""
 
-    def __init__(self, sess: Session = Depends(get_db)) -> None:
+    def __init__(self, sess: Session) -> None:
         """Initialize the repository."""
         self.sess: Session = sess
 
     def add_beneficiary(self, beneficiary: Beneficiary) -> bool:
         """Add a beneficiary."""
-        benef = Beneficiary(**beneficiary)
+        benef = Beneficiary(**beneficiary.dict())
         self.sess.add(benef)
         self.sess.commit()
         return True
@@ -53,9 +51,9 @@ class BeneficiaryRepo:
                 uuid_pk=uuid_pk
             )
             if beneficiary.one():
-                beneficiary.update(data)
+                beneficiary.update(data.dict(), synchronize_session=False)
                 self.sess.commit()
-                return True
+                return beneficiary.one()
             return None
         except DataError:
             return None

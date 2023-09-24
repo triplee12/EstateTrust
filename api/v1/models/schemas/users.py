@@ -107,8 +107,7 @@ class AddBeneficiary(BaseUser):
     """Create a new beneficiary."""
 
     relation: BeneficiaryEnum
-    # Add Assets
-    # Add Monetary
+    added_by: Optional[str] = ""
 
 
 class BeneficiaryRes(BaseModel):
@@ -119,8 +118,9 @@ class BeneficiaryRes(BaseModel):
     middle_name: str
     last_name: str
     relation: str
+    added_by: str
     created_at: datetime
-    updated_at: datetime
+    # updated_at: datetime
 
     class Config:
         """Serialiser configuration."""
@@ -139,7 +139,7 @@ class TrusteeRes(BaseModel):
     email: EmailStr
     phone_number: str
     relation: str
-    beneficiaries: List[BeneficiaryRes]
+    added_by: str
     created_at: datetime
     # updated_at: datetime
 
@@ -228,3 +228,4 @@ class UpdateBeneficiary(BaseModel):
     last_name: Optional[str]
     middle_name: Optional[str]
     relation: Optional[BeneficiaryEnum]
+    updated_at: str = datetime.now()
