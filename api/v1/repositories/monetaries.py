@@ -3,10 +3,8 @@
 
 from typing import List
 from uuid import UUID
-from fastapi import Depends
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import DataError, IntegrityError
-from api.v1.configurations.database import get_db
 from api.v1.models.data.users import Beneficiary, User
 from api.v1.models.data.assets import Monetary
 
@@ -14,7 +12,7 @@ from api.v1.models.data.assets import Monetary
 class MonetaryRepository:
     """Monetary repository."""
 
-    def __init__(self, sess: Session = Depends(get_db)) -> None:
+    def __init__(self, sess: Session) -> None:
         """Initialize the repository."""
         self.sess: Session = sess
 
@@ -28,7 +26,7 @@ class MonetaryRepository:
             return True if successful, False otherwise
         """
         try:
-            asset = Monetary(*data)
+            asset = Monetary(**data.dict())
             self.sess.add(asset)
             self.sess.commit()
             return True
@@ -110,9 +108,9 @@ class MonetaryRepository:
                 owner_id=grantor_id,
                 uuid_pk=asset_id
             )
-            monetary.update(**data)
+            monetary.update(data.dict(), synchronize_session=False)
             self.sess.commit()
-            return True
+            return monetary.first()
         except DataError:
             return False
 
