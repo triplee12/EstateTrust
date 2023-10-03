@@ -25,7 +25,16 @@ async def create_asset(
     current_user: str = Depends(get_current_user),
     sess: Session = Depends(get_db)
 ):
-    """Add asset to database."""
+    """
+    Add asset to database.
+
+    Methods:
+        POST
+    Args:
+        data (dict): Object that contains the asset information.
+    Returns:
+        Status code 201 on successful, otherwise 422.
+    """
     repo = AssetRepository(sess)
     if current_user.uuid_pk == grantor_id:
         grantor = sess.query(User).filter(User.uuid_pk == grantor_id).first()
@@ -49,7 +58,14 @@ async def retrieve_assets(
     grantor_id: str, current_user: str = Depends(get_current_user),
     sess: Session = Depends(get_db)
 ):
-    """Retrieve all assets for a specific grantor."""
+    """
+    Retrieve all assets for a specific grantor.
+
+    Methods:
+        GET
+    Returns:
+        Status code 200 on successful, otherwise 204.
+    """
     repo = AssetRepository(sess)
     if current_user.uuid_pk == grantor_id:
         assets = repo.get_all_assests_for_grantor(user_id=grantor_id)
@@ -69,7 +85,14 @@ async def retrieve_assets_for_beneficiary(
     current_user: str = Depends(get_current_user),
     sess: Session = Depends(get_db)
 ):
-    """Retrieve all assets for a specific beneficiary."""
+    """
+    Retrieve all assets for a specific beneficiary.
+
+    Methods:
+        GET
+    Returns:
+        Status code 200 on successful, otherwise 204.
+    """
     repo = AssetRepository(sess)
     if current_user:
         assets = repo.get_all_assests_for_beneficiary(user_id=bene_id)
@@ -87,7 +110,14 @@ async def retrieve_asset(
     current_user: str = Depends(get_current_user),
     sess: Session = Depends(get_db)
 ):
-    """Retrieve an asset."""
+    """
+    Retrieve an asset.
+
+    Methods:
+        GET
+    Returns:
+        Status code 200 on successful, otherwise 404.
+    """
     repo = AssetRepository(sess)
     if current_user:
         asset = repo.get_asset(user_id=grantor_id, asset_id=asset_id)
@@ -108,7 +138,14 @@ async def update_asset(
     current_user: str = Depends(get_current_user),
     sess: Session = Depends(get_db)
 ):
-    """Update an asset."""
+    """
+    Update an asset.
+
+    Methods:
+        PATCH
+    Returns:
+        Status code 200 on successful, otherwise 304.
+    """
     repo = AssetRepository(sess)
     if current_user:
         asset = repo.update_asset(
@@ -130,7 +167,14 @@ async def delete_asset(
     current_user: str = Depends(get_current_user),
     sess: Session = Depends(get_db)
 ):
-    """Delete an asset."""
+    """
+    Delete an asset.
+
+    Methods:
+        DELETE
+    Returns:
+        Status code 204 on successful, otherwise 304.
+    """
     repo = AssetRepository(sess)
     if current_user:
         asset = repo.delete_asset(
