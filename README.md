@@ -34,6 +34,57 @@ Our main objectives of the developing estate planning management system software
 - Assets Valuation
 - Beneficiary Designations
 
+## How To Run EstateTrust Application
+
+Running a FastAPI application involves a few steps, including setting up the environment, defining your application, and starting the development server. Here are the steps to run a FastAPI application:
+
+1. **Set Up Your Environment:**
+
+   Before running a FastAPI application, ensure you have Python and the required dependencies installed. You can use a virtual environment to manage dependencies to avoid conflicts with other projects. Here's how to create and activate a virtual environment using Python's built-in `venv` module:
+
+   ```bash
+   # Create a virtual environment
+   python -m venv myenv
+
+   # Activate the virtual environment (on Windows)
+   myenv\Scripts\activate
+
+   # Activate the virtual environment (on macOS/Linux)
+   source myenv/bin/activate
+   ```
+
+   Replace `myenv` with the name you prefer for your virtual environment.
+
+2. **Install FastAPI and Dependencies:**
+
+   Inside your activated virtual environment, you should install FastAPI and any additional dependencies your application requires. You can use `pip` to install them:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Run the Development Server:**
+
+   FastAPI provides a built-in development server, but you can also use ASGI servers like Uvicorn for production. To run your FastAPI application using the development server, use the following command inside the EstateTrust directory:
+
+   ```bash
+   uvicorn api.v1.main:app --reload
+   ```
+
+   The `--reload` flag enables automatic code reloading during development, making it easier to see changes immediately.
+
+4. **Access EstateTrust Application:**
+
+   Once your FastAPI application is running, you can access it by opening a web browser or making HTTP requests to the specified endpoints. By default, the development server runs on `http://localhost:8000`.
+
+5. **Stopping the Development Server:**
+
+   To stop the development server, you can use `Ctrl+C` in the terminal where the server is running.
+
+6. **Production Deployment:**
+
+   For production deployment, it's recommended to use ASGI servers like Uvicorn, Hypercorn, or Gunicorn. These servers provide better performance and reliability. You can refer to the documentation of these servers for deployment instructions specific to your environment.
+
 ## APIs Routes And Documentation
 
 ## Users API Documentation
