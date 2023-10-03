@@ -547,6 +547,297 @@ This API documentation provides information on how to use the "Beneficiaries" en
 
 This API documentation provides a guide to using the "Beneficiaries" endpoints of the Estate Trust application. Ensure you have the necessary authentication token and provide valid data when making requests to these endpoints.
 
+## Estate Trust Assets API Documentation
+
+This documentation provides information on how to use the Estate Trust Assets API. The API allows users to manage assets, including creating, retrieving, updating, and deleting assets for specific grantors and beneficiaries.
+
+## Base URL
+
+The base URL for all API endpoints is `/assets`.
+
+## Authentication
+
+All endpoints require authentication. Users must be authenticated to access these endpoints.
+
+## API Endpoints
+
+### Create Asset
+
+- **Endpoint**: `POST /{grantor_id}/create/asset`
+- **Description**: Add an asset to the database.
+- **Request Parameters**:
+  - `grantor_id` (string, path): The ID of the grantor for whom the asset will be created.
+- **Request Body**:
+  - `data` (object, JSON): Object that contains the asset information. It should follow the schema specified in the `AddAsset` model.
+- **Response**:
+  - Status code 201 (Created) on success.
+  - Status code 422 (Unprocessable Entity) on failure.
+- **Example Request**:
+  ```http
+  POST /assets/{grantor_id}/create/asset
+  Content-Type: application/json
+
+  {
+    "name": "Asset Name",
+    "description": "Asset Description",
+    "value": 100000
+  }
+  ```
+- **Example Response** (HTTP 201 Created):
+  ```json
+  {
+    "message": "Asset added successfully"
+  }
+  ```
+
+### Retrieve Assets for Grantor
+
+- **Endpoint**: `GET /grantor/{grantor_id}/assets`
+- **Description**: Retrieve all assets for a specific grantor.
+- **Request Parameters**:
+  - `grantor_id` (string, path): The ID of the grantor for whom assets will be retrieved.
+- **Response**:
+  - Status code 200 (OK) on success with a list of assets.
+  - Status code 204 (No Content) if no assets are found.
+- **Example Request**:
+  ```http
+  GET /assets/grantor/{grantor_id}/assets
+  ```
+- **Example Response** (HTTP 200 OK):
+  ```json
+  [
+    {
+      "name": "Asset Name 1",
+      "description": "Asset Description 1",
+      "value": 100000
+    },
+    {
+      "name": "Asset Name 2",
+      "description": "Asset Description 2",
+      "value": 75000
+    }
+  ]
+  ```
+
+### Retrieve Assets for Beneficiary
+
+- **Endpoint**: `GET /beneficiary/{bene_id}/assets`
+- **Description**: Retrieve all assets for a specific beneficiary.
+- **Request Parameters**:
+  - `bene_id` (string, path): The ID of the beneficiary for whom assets will be retrieved.
+- **Response**:
+  - Status code 200 (OK) on success with a list of assets.
+  - Status code 204 (No Content) if no assets are found.
+- **Example Request**:
+  ```http
+  GET /assets/beneficiary/{bene_id}/assets
+  ```
+- **Example Response** (HTTP 200 OK):
+  ```json
+  [
+    {
+      "name": "Asset Name 1",
+      "description": "Asset Description 1",
+      "value": 100000
+    },
+    {
+      "name": "Asset Name 2",
+      "description": "Asset Description 2",
+      "value": 75000
+    }
+  ]
+  ```
+
+### Retrieve Asset
+
+- **Endpoint**: `GET /{grantor_id}/assets/{asset_id}`
+- **Description**: Retrieve a specific asset.
+- **Request Parameters**:
+  - `grantor_id` (string, path): The ID of the grantor who owns the asset.
+  - `asset_id` (string, path): The ID of the asset to retrieve.
+- **Response**:
+  - Status code 200 (OK) on success with the asset details.
+  - Status code 404 (Not Found) if the asset is not found.
+- **Example Request**:
+  ```http
+  GET /assets/{grantor_id}/assets/{asset_id}
+  ```
+- **Example Response** (HTTP 200 OK):
+  ```json
+  {
+    "name": "Asset Name",
+    "description": "Asset Description",
+    "value": 100000
+  }
+  ```
+
+### Update Asset
+
+- **Endpoint**: `PATCH /{grantor_id}/assets/{asset_id}/update`
+- **Description**: Update a specific asset.
+- **Request Parameters**:
+  - `grantor_id` (string, path): The ID of the grantor who owns the asset.
+  - `asset_id` (string, path): The ID of the asset to update.
+- **Request Body**:
+  - `data` (object, JSON): Object that contains the updated asset information. It should follow the schema specified in the `UpdateAsset` model.
+- **Response**:
+  - Status code 200 (OK) on success with the updated asset details.
+  - Status code 304 (Not Modified) if the asset is not modified.
+- **Example Request**:
+  ```http
+  PATCH /assets/{grantor_id}/assets/{asset_id}/update
+  Content-Type: application/json
+
+  {
+    "name": "Updated Asset Name",
+    "description": "Updated Asset Description",
+    "value": 150000
+  }
+  ```
+- **Example Response** (HTTP 200 OK):
+  ```json
+  {
+    "name": "Updated Asset Name",
+    "description": "Updated Asset Description",
+    "value": 150000
+  }
+  ```
+
+### Delete Asset
+
+- **Endpoint**: `DELETE /{grantor_id}/assets/{asset_id}/delete`
+- **Description**: Delete a specific asset.
+- **Request Parameters**:
+  - `grantor_id` (string, path): The ID of the grantor who owns the asset.
+  - `asset_id` (string, path): The ID of the asset to delete.
+- **Response**:
+  - Status code 204 (No Content) on success.
+  - Status code 304 (Not Modified) if the asset is not deleted.
+- **Example Request**:
+  ```http
+  DELETE /assets/{grantor_id}/assets/{asset_id}/delete
+  ```
+- **Example Response** (HTTP 204 No Content):
+  No content is returned on successful deletion.
+
+## Error Responses
+
+In case of an error, the API will return a JSON response with an error message and an appropriate HTTP status code.
+
+Example Error Response (HTTP 404 Not Found):
+```json
+{
+  "detail": "Asset not found"
+}
+```
+
+## Conclusion
+
+This documentation provides an overview of the Estate Trust Assets API and its endpoints. Users can create, retrieve, update, and delete assets for specific grantors and beneficiaries using these endpoints.
+
+## API Documentation for the Monetaries Router
+
+This API documentation provides information about the Monetaries Router for the "Estate Trust" application. The Monetaries Router is responsible for managing monetary assets and provides endpoints for creating, retrieving, updating, and deleting these assets.
+
+## Base URL
+
+The base URL for all endpoints in this API is `/monetaries`.
+
+## Authentication
+
+Authentication is required for most endpoints in this API. Users must obtain a valid OAuth token to access these endpoints. The `get_current_user` function is used to authenticate users.
+
+## Error Handling
+
+Errors in this API are communicated through HTTP status codes and JSON response bodies. Common status codes include:
+- 200 OK: Successful operation
+- 201 Created: Resource successfully created
+- 204 No Content: Resource not found or deleted
+- 304 Not Modified: Error occurred while processing the request
+- 400 Bad Request: Invalid request data
+- 401 Unauthorized: Authentication required
+- 404 Not Found: Resource not found
+- 422 Unprocessable Entity: Error occurred while processing the request
+
+## Endpoints
+
+### 1. Create a New Monetary Asset
+
+- **HTTP Method:** POST
+- **Endpoint:** `/monetaries/asset/{grantor_id}/create/monetary`
+- **Parameters:**
+  - `grantor_id` (string): ID of the grantor creating the asset.
+- **Request Body (JSON):** `AddMonetary` schema
+- **Authentication:** Required
+- **Response:**
+  - 201 Created: Asset created successfully
+  - 422 Unprocessable Entity: Error occurred while adding the asset
+- **Description:** This endpoint allows a grantor to create a new monetary asset. The `AddMonetary` schema defines the required data for creating the asset.
+
+### 2. Retrieve All Monetary Assets for a Grantor
+
+- **HTTP Method:** GET
+- **Endpoint:** `/monetaries/asset/asset/{grantor_id}/assets`
+- **Parameters:**
+  - `grantor_id` (string): ID of the grantor to retrieve assets for.
+- **Authentication:** Required
+- **Response:** List of `MonetaryRes` schemas
+- **Description:** This endpoint retrieves all monetary assets for a specific grantor.
+
+### 3. Retrieve All Monetary Assets for a Beneficiary
+
+- **HTTP Method:** GET
+- **Endpoint:** `/monetaries/asset/beneficiary/{bene_id}/assets`
+- **Parameters:**
+  - `bene_id` (string): ID of the beneficiary to retrieve assets for.
+- **Authentication:** Required
+- **Response:** List of `MonetaryRes` schemas
+- **Description:** This endpoint retrieves all monetary assets associated with a specific beneficiary.
+
+### 4. Retrieve a Monetary Asset
+
+- **HTTP Method:** GET
+- **Endpoint:** `/monetaries/asset/grantor/{grantor_id}/assets/{asset_id}`
+- **Parameters:**
+  - `grantor_id` (string): ID of the grantor who owns the asset.
+  - `asset_id` (string): ID of the asset to retrieve.
+- **Authentication:** Required
+- **Response:** `MonetaryRes` schema
+- **Description:** This endpoint retrieves information about a specific monetary asset owned by a grantor.
+
+### 5. Update a Monetary Asset
+
+- **HTTP Method:** PATCH
+- **Endpoint:** `/monetaries/asset/grantor/{grantor_id}/assets/{asset_id}/update`
+- **Parameters:**
+  - `grantor_id` (string): ID of the grantor who owns the asset.
+  - `asset_id` (string): ID of the asset to update.
+- **Request Body (JSON):** `UpdateMonetary` schema
+- **Authentication:** Required
+- **Response:** `MonetaryRes` schema
+- **Description:** This endpoint allows a grantor to update the information of a specific monetary asset.
+
+### 6. Delete a Monetary Asset
+
+- **HTTP Method:** DELETE
+- **Endpoint:** `/monetaries/asset/grantor/{grantor_id}/assets/{asset_id}/delete`
+- **Parameters:**
+  - `grantor_id` (string): ID of the grantor who owns the asset.
+  - `asset_id` (string): ID of the asset to delete.
+- **Authentication:** Required
+- **Response:**
+  - 204 No Content: Asset deleted successfully
+  - 304 Not Modified: Error occurred while deleting the asset
+- **Description:** This endpoint allows a grantor to delete a specific monetary asset.
+
+## Data Schemas
+
+- `AddMonetary`: Schema for creating a new monetary asset.
+- `MonetaryRes`: Schema for representing a monetary asset.
+- `UpdateMonetary`: Schema for updating an existing monetary asset.
+
+Please refer to the code and comments within the API for more specific details about the data schemas and their structures.
+
 ## Error Responses
 
 The API may return other HTTP status codes and corresponding error messages in case of unexpected errors or invalid requests. These error responses will include a status code and a detailed error message.
