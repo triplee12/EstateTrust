@@ -169,9 +169,43 @@ Retrieve the grantor's dashboard.
 - `404 Not Found`: User not found.
 - `403 Forbidden`: Access denied if the requested UUID does not match the authenticated user's UUID.
 
+**Response Example**
+
+```json
+{
+  "uuid_pk": "43725e17-72d5-4def-be70-91accfe2009a",
+  "username": "cBolton",
+  "first_name": "Who",
+  "middle_name": "Emmanuel",
+  "last_name": "Ejobe",
+  "email": "triplee12@gmail.com",
+  "phone_number": "+2348153836253",
+  "date_of_birth": "2000-07-18",
+  "gender": "male",
+  "created_at": "2023-10-03T11:49:29.118054+01:00",
+  "beneficiaries": [],
+  "executors": [
+    {
+      "uuid_pk": "d55b069e-dda1-4732-b110-8fcfdc3b10ec",
+      "username": "username",
+      "first_name": "Trustee1",
+      "middle_name": "Mytrustee",
+      "last_name": "Trustee",
+      "email": "mytrustee@gmail.com",
+      "phone_number": "12345678901",
+      "relation": "lawyer",
+      "added_by": "43725e17-72d5-4def-be70-91accfe2009a",
+      "created_at": "2023-10-03T11:52:27.286994+01:00"
+    }
+  ],
+  "assets": [],
+  "monetaries": []
+}
+```
+
 ## Update Grantor Account
 
-### `PATCH /account/dashboard/{uuid_pk}/update`
+### `PUT /account/dashboard/{uuid_pk}/update`
 
 Update the grantor's account.
 
@@ -360,7 +394,7 @@ GET /trustees/account/{grantor_id}/trustees
 
 Update the information of a specific trustee associated with a grantor.
 
-- **HTTP Method:** PATCH
+- **HTTP Method:** PUT
 - **Endpoint:** `/account/{grantor_id}/trustees/{trustee_id}/update`
 - **Request Body:** [UpdateTrustee](#updatetrustee-request-body)
 - **Response:** [TrusteeRes](#trusteerres-response-model) on success.
@@ -379,7 +413,7 @@ Update the information of a specific trustee associated with a grantor.
 #### Example Request
 
 ```http
-PATCH /trustees/account/{grantor_id}/trustees/{trustee_id}/update
+PUT /trustees/account/{grantor_id}/trustees/{trustee_id}/update
 ```
 
 #### Example Response
@@ -560,7 +594,7 @@ This API documentation provides information on how to use the "Beneficiaries" en
 ### Update Beneficiary <a name="update-beneficiary"></a>
 
 - **Endpoint**: `/beneficiaries/account/{grantor_id}/beneficiary/{bene_id}/update`
-- **HTTP Method**: PATCH
+- **HTTP Method**: PUT
 - **Description**: Update beneficiary data in the database.
 - **Parameters**:
   - `grantor_id` (string): ID of the grantor (account owner).
@@ -724,7 +758,7 @@ All endpoints require authentication. Users must be authenticated to access thes
 
 ### Update Asset
 
-- **Endpoint**: `PATCH /{grantor_id}/assets/{asset_id}/update`
+- **Endpoint**: `PUT /{grantor_id}/assets/{asset_id}/update`
 - **Description**: Update a specific asset.
 - **Request Parameters**:
   - `grantor_id` (string, path): The ID of the grantor who owns the asset.
@@ -858,7 +892,7 @@ Errors in this API are communicated through HTTP status codes and JSON response 
 
 ### 5. Update a Monetary Asset
 
-- **HTTP Method:** PATCH
+- **HTTP Method:** PUT
 - **Endpoint:** `/monetaries/asset/grantor/{grantor_id}/assets/{asset_id}/update`
 - **Parameters:**
   - `grantor_id` (string): ID of the grantor who owns the asset.
@@ -893,8 +927,7 @@ Please refer to the code and comments within the API for more specific details a
 
 The API may return other HTTP status codes and corresponding error messages in case of unexpected errors or invalid requests. These error responses will include a status code and a detailed error message.
 
-
 ## Authors
 
-- Chukwuebuka Ejie (Backend Developer) <tripleeoliver@gmail.com>
-- Franklin Ikeogu Chidera (Frontend Developer)
+- Chukwuebuka Ejie (Software Engineer) <tripleeoliver@gmail.com>
+- Franklin Ikeogu Chidera (Software Engineer)
