@@ -98,7 +98,7 @@ async def get_dashboard(
     )
 
 
-@user_routers.patch(
+@user_routers.put(
     "/account/dashboard/{uuid_pk}/update",
     response_model=UserRes
 )
@@ -113,10 +113,16 @@ async def update_account(
         update = repo.update_user(uuid_pk=current_user.uuid_pk, data=data)
         if update:
             return update
-        return {"message": "error updating account"}
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="error updating account"
+            )
 
 
-@user_routers.delete("/account/dashboard/{uuid_pk}/delete")
+@user_routers.delete(
+    "/account/dashboard/{uuid_pk}/delete",
+    status_code=204
+)
 async def delete_account(
     uuid_pk: str,
     current_user: str = Depends(get_current_user),
