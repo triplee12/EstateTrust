@@ -1,11 +1,13 @@
 import { createStore, applyMiddleware, combineReducers } from 'redux';
 import thunk, { ThunkMiddleware } from 'redux-thunk';
 import authReducer, { AuthActionTypes}  from './reducers/authReducer'; // Import your auth reducer and types here
+import assetReducer from './reducers/assetsReducer';
 
 export type RootState = ReturnType<typeof rootReducer>;
 
 const rootReducer = combineReducers({
   auth: authReducer,
+  assets: assetReducer,
   // Add other reducers here
 });
 

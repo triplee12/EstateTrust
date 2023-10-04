@@ -1,27 +1,42 @@
-# React + TypeScript + Vite
+# EstateTrust - Frontend Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
 
-Currently, two official plugins are available:
+EstateTrust is an application designed for efficient asset management and tracking. It leverages modern technologies such as TypeScript, Chakra UI, and Vite to provide a responsive and intuitive user experience.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## Expanding the ESLint configuration
+- **Asset Tracking:** Easily manage, track, and update information about each asset in your inventory.
+- **Will Planning:** Plan in advance how your assets are shared
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Installation
 
-- Configure the top-level `parserOptions` property like this:
+1. Clone the repository: `git clone [repository_url]`
+2. Install dependencies: `npm install`
+3. Run the application: `npm run dev`
 
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
-```
+## Requirements
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+- Node.js
+- [Vite](https://vitejs.dev/)
+
+## Usage
+
+1. Access the application through the provided URL.
+2. Log in with your credentials.
+3. Start managing your assets through the intuitive user interface.
+
+## Configuration
+
+- Customize configuration settings in the `vite.config.js` file and other relevant files.
+
+## Technologies Used
+
+- **TypeScript:** A typed superset of JavaScript for enhanced code quality.
+- **Chakra UI:** A modular and accessible component library for React applications.
+- **Vite:** A fast development server and build tool for modern web development.
+
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
