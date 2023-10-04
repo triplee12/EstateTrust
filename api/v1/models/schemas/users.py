@@ -62,7 +62,7 @@ class AccessToken(BaseModel):
     """Access token schema."""
 
     token_type: str
-    bearer: str
+    access_token: str
 
 
 class BaseUser(BaseModel):
