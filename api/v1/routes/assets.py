@@ -40,8 +40,12 @@ async def create_asset(
     if current_user.uuid_pk == grantor_id:
         grantor = sess.query(User).filter(User.uuid_pk == grantor_id).first()
         data.owner_id = grantor.uuid_pk
-        up_file = await upload_file(data.document)
-        data.document = up_file["filename"]
+        if data.document is not None:
+            up_file = await upload_file(
+                uuid_pk=grantor.uuid_pk,
+                file=data.document
+            )
+            data.document = up_file["filename"]
         added = repo.add_asset(data=data)
         if added:
             return {
@@ -161,12 +165,16 @@ async def update_asset(
         Status code 200 on successful, otherwise 304.
     """
     repo = AssetRepository(sess)
+    grantor = sess.query(User).filter(User.uuid_pk == grantor_id).first()
     if current_user:
-        if data.document:
-            up_file = await upload_file(data.document)
+        if data.document is not None:
+            up_file = await upload_file(
+                uuid_pk=grantor.uuid_pk,
+                file=data.document
+            )
             data.document = up_file["filename"]
         asset = repo.update_asset(
-            user_id=grantor_id, asset_id=asset_id, data=data
+            user_id=grantor.uuid_pk, asset_id=asset_id, data=data
         )
         if asset:
             return asset
@@ -177,7 +185,8 @@ async def update_asset(
 
 
 @asset_router.delete(
-    "/{grantor_id}/assets/{asset_id}/delete"
+    "/{grantor_id}/assets/{asset_id}/delete",
+    status_code=204
 )
 async def delete_asset(
     grantor_id: str, asset_id: str,

@@ -41,8 +41,12 @@ async def create_monetary_asset(
     if current_user.uuid_pk == grantor_id:
         grantor = sess.query(User).filter(User.uuid_pk == grantor_id).first()
         data.owner_id = grantor.uuid_pk
-        up_file = await upload_file(data.document)
-        data.document = up_file["filename"]
+        if data.document is not None:
+            up_file = await upload_file(
+                grantor.uuid_pk,
+                data.document
+            )
+            data.document = up_file["filename"]
         added = repo.add_monetary_asset(data=data)
         if added:
             return {
@@ -175,11 +179,17 @@ async def update_asset(
     """
     repo = MonetaryRepository(sess)
     if current_user:
-        if data.document:
-            up_file = await upload_file(data.document)
+        grantor = sess.query(User).filter(
+            User.uuid_pk == grantor_id
+        ).first()
+        if data.document is not None:
+            up_file = await upload_file(
+                grantor.uuid_pk,
+                data.document
+            )
             data.document = up_file["filename"]
         asset = repo.update_asset(
-            grantor_id=grantor_id, asset_id=asset_id, data=data
+            grantor_id=grantor.uuid_pk, asset_id=asset_id, data=data
         )
         if asset:
             return asset
@@ -210,8 +220,11 @@ async def delete_asset(
     """
     repo = MonetaryRepository(sess)
     if current_user:
+        grantor = sess.query(User).filter(
+            User.uuid_pk == grantor_id
+        ).first()
         asset = repo.delete_asset(
-            grantor_id=grantor_id, asset_id=asset_id
+            grantor_id=grantor.uuid_pk, asset_id=asset_id
         )
         if asset:
             return
