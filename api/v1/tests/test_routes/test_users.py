@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """Test users routes."""
 
-from typing import Dict, List
+from typing import Dict
 import pytest
 from jose import jwt
 from api.v1.configurations.settings import settings
@@ -11,7 +11,7 @@ from api.v1.models.schemas.users import AccessToken
 def test_create_grantor_account(client) -> Dict[str, str]:
     """Test create grantor account."""
     grantor = client.post(
-        "/grantors/account/create",
+        "/api/v1/grantors/account/create",
         json={
             "first_name": "ChukwuEbuka",
             "last_name": "Ejie",
@@ -35,7 +35,7 @@ def test_create_grantor_account(client) -> Dict[str, str]:
 def test_create_grantor_account_fail(client) -> Dict[str, str]:
     """Test create grantor account fail."""
     grantor = client.post(
-        "/grantors/account/create",
+        "/api/v1/grantors/account/create",
         json={
             "first_name": "ChukwuEbuka",
             "last_name": "Ejie",
@@ -58,10 +58,11 @@ def test_create_grantor_account_fail(client) -> Dict[str, str]:
 def test_login(client) -> Dict[str, str]:
     """Test login function."""
     data = client.post(
-        "grantors/account/login",
+        "/api/v1/auths/account/login",
         json={
             "username": "eBolton",
-            "password": "07067Oliver"
+            "password": "07067Oliver",
+            'account_type': 'grantor'
         }
     )
     assert data.status_code == 200
@@ -86,10 +87,11 @@ def test_login(client) -> Dict[str, str]:
 def test_login_fail(client, username, password, status_code):
     """Test login failure."""
     data = client.post(
-        "grantors/account/login",
+        "/api/v1/auths/account/login",
         json={
             "username": username,
-            "password": password
+            "password": password,
+            'account_type': 'grantor'
         }
     )
     assert data.status_code == status_code
@@ -101,9 +103,10 @@ def test_user_access_token(client):
     SECRET_KEY = settings.OAUTH2_SECRET_KEY
     ALGORITHM = settings.ALGORITHM
 
-    res = client.post('/grantors/account/login', json={
+    res = client.post('/api/v1/auths/account/login', json={
         'username': 'eBolton',
-        'password': '07067Oliver'
+        'password': '07067Oliver',
+        'account_type': 'grantor'
     })
     login_data = AccessToken(**res.json())
     decoded_jwt = jwt.decode(
@@ -123,9 +126,10 @@ def test_user_dashboard(client) -> Dict[str, str]:
     SECRET_KEY = settings.OAUTH2_SECRET_KEY
     ALGORITHM = settings.ALGORITHM
 
-    res = client.post('/grantors/account/login', json={
+    res = client.post('/api/v1/auths/account/login', json={
         'username': 'eBolton',
-        'password': '07067Oliver'
+        'password': '07067Oliver',
+        'account_type': 'grantor'
     })
     login_data = AccessToken(**res.json())
     decoded_jwt = jwt.decode(
@@ -137,7 +141,7 @@ def test_user_dashboard(client) -> Dict[str, str]:
         'Authorization': 'Bearer {}'.format(login_data.access_token)
     }
     grantor = client.get(
-        f"/grantors/account/dashboard/{user_id}",
+        f"/api/v1/grantors/account/dashboard/{user_id}",
         headers=headers
     )
     assert grantor.status_code == 200
@@ -149,9 +153,10 @@ def test_update_account(client):
     SECRET_KEY = settings.OAUTH2_SECRET_KEY
     ALGORITHM = settings.ALGORITHM
 
-    res = client.post('/grantors/account/login', json={
+    res = client.post('/api/v1/auths/account/login', json={
         'username': 'eBolton',
-        'password': '07067Oliver'
+        'password': '07067Oliver',
+        'account_type': 'grantor'
     })
     login_data = AccessToken(**res.json())
     decoded_jwt = jwt.decode(
@@ -163,7 +168,7 @@ def test_update_account(client):
         'Authorization': 'Bearer {}'.format(login_data.access_token)
     }
     grantor = client.put(
-        f"/grantors/account/dashboard/{user_id}/update",
+        f"/api/v1/grantors/account/dashboard/{user_id}/update",
         headers=headers,
         json={
             "first_name": "Tester",
@@ -180,9 +185,10 @@ def test_update_account_fail(client):
     SECRET_KEY = settings.OAUTH2_SECRET_KEY
     ALGORITHM = settings.ALGORITHM
 
-    res = client.post('/grantors/account/login', json={
+    res = client.post('/api/v1/auths/account/login', json={
         'username': 'eBolton',
-        'password': '07067Oliver'
+        'password': '07067Oliver',
+        'account_type': 'grantor'
     })
     login_data = AccessToken(**res.json())
     decoded_jwt = jwt.decode(
@@ -194,7 +200,7 @@ def test_update_account_fail(client):
         'Authorization': 'Bearer {}'.format(login_data.access_token)
     }
     grantor = client.put(
-        f"/grantors/account/dashboard/{user_id}/update",
+        f"/api/v1/grantors/account/dashboard/{user_id}/update",
         headers=headers,
         json={
             "username": "aBolton"
@@ -208,9 +214,10 @@ def test_delete_account(client):
     SECRET_KEY = settings.OAUTH2_SECRET_KEY
     ALGORITHM = settings.ALGORITHM
 
-    res = client.post('/grantors/account/login', json={
+    res = client.post('/api/v1/auths/account/login', json={
         'username': 'eBolton',
-        'password': '07067Oliver'
+        'password': '07067Oliver',
+        'account_type': 'grantor'
     })
     login_data = AccessToken(**res.json())
     decoded_jwt = jwt.decode(
@@ -222,7 +229,7 @@ def test_delete_account(client):
         'Authorization': 'Bearer {}'.format(login_data.access_token)
     }
     grantor = client.delete(
-        f"/grantors/account/dashboard/{user_id}/delete",
+        f"/api/v1/grantors/account/dashboard/{user_id}/delete",
         headers=headers
     )
     assert grantor.status_code == 204
