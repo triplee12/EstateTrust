@@ -40,7 +40,11 @@ async def login(data: SignInUser, sess: Session = Depends(get_db)):
                     "username": q_user.username
                 }
             )
-            return {"access_token": access_token, "token_type": "bearer"}
+            return {
+                "access_token": access_token,
+                "token_type": "bearer",
+                "id": q_user.uuid_pk
+            }
     except UnboundLocalError as errpr:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
