@@ -79,7 +79,7 @@ class TrusteeRepository:
         """
         try:
             trustee = self.sess.query(Trustee).filter_by(
-                uuid_id=trustee_id,
+                uuid_pk=trustee_id,
                 added_by=user_id
             )
             if trustee.first():
@@ -104,7 +104,7 @@ class TrusteeRepository:
         """
         try:
             trustee = self.sess.query(Trustee).filter_by(
-                uuid_id=trustee_id,
+                uuid_pk=trustee_id,
                 added_by=user_id
             )
             if trustee.first():
