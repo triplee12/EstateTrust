@@ -8,7 +8,7 @@ from api.v1.configurations.settings import settings
 from api.v1.models.schemas.users import AccessToken
 
 
-@pytest.mark.order(after="test_users.py::test_create_grantor_account")
+@pytest.mark.order(after="test_authenticate.py::test_user_access_token")
 @pytest.mark.parametrize(
     "first_name, middle_name, last_name, phone_number, email, username, password, relation, note, status_code",
     [
