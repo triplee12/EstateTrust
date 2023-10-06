@@ -3,16 +3,13 @@
 
 from fastapi import APIRouter, HTTPException, Depends, status
 from sqlalchemy.orm import Session
-from api.v1.authorizations.oauth import (
-    get_current_user, create_token
-)
+from api.v1.authorizations.oauth import get_current_user
 from api.v1.configurations.database import get_db
-from api.v1.models.data.users import User
 from api.v1.models.schemas.users import (
-    RegisterUser, SignInUser, UserRes, UpdateUser
+    RegisterUser, UserRes, UpdateUser
 )
 from api.v1.repositories.users import UserRepository
-from api.v1.utils.passwd import hash_pwd, verify_pwd
+from api.v1.utils.passwd import hash_pwd
 
 user_routers = APIRouter(prefix="/grantors", tags=["grantor",])
 
@@ -45,35 +42,6 @@ async def create_grantor_account(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         detail="Error creating account."
     )
-
-
-@user_routers.post("/account/login", status_code=200)
-async def login(data: SignInUser, sess: Session = Depends(get_db)):
-    """
-    Login a user.
-
-    Methods:
-        POST
-    Args:
-        data (dict): Object that contains username and password.
-    Returns:
-        Status code 200 on successful, otherwise 401.
-    """
-    q_user: User | None = sess.query(User).filter(
-        User.username == data.username
-    ).first()
-    if q_user and verify_pwd(data.password, q_user.password):
-        access_token = create_token(
-            data={
-                "uuid_pk": q_user.uuid_pk,
-                "username": q_user.username
-            }
-        )
-        return {"access_token": access_token, "token_type": "bearer"}
-    raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid credentials"
-        )
 
 
 @user_routers.get("/account/dashboard/{uuid_pk}", response_model=UserRes)

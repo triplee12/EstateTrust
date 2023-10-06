@@ -24,7 +24,7 @@ class User(Base):
     )
     username = Column(String(10), nullable=False, unique=True)
     first_name = Column(String(50), nullable=False)
-    middle_name = Column(String(50), nullable=False)
+    middle_name = Column(String(50), nullable=True)
     last_name = Column(String(50), nullable=False)
     email = Column(String(150), nullable=False, unique=True)
     phone_number = Column(String(50), nullable=False, unique=True)
@@ -77,7 +77,7 @@ class Beneficiary(Base):
         server_default=text("gen_random_uuid()")
     )
     first_name = Column(String(50), nullable=False)
-    middle_name = Column(String(50), nullable=False)
+    middle_name = Column(String(50), nullable=True)
     last_name = Column(String(50), nullable=False)
     relation = Column(
         Enum(
@@ -129,7 +129,7 @@ class Trustee(Base):
     )
     username = Column(String(10), nullable=False, unique=True)
     first_name = Column(String(50), nullable=False)
-    middle_name = Column(String(50), nullable=False)
+    middle_name = Column(String(50), nullable=True)
     last_name = Column(String(50), nullable=False)
     email = Column(String(150), nullable=False)
     phone_number = Column(String(50), nullable=False)
@@ -137,7 +137,7 @@ class Trustee(Base):
     relation = Column(
         Enum(
             "brother", "sister", "friend", "lawyer",
-            name="executor_enum",
+            "wife", name="executor_enum",
             create_type=False
         ), nullable=False
     )

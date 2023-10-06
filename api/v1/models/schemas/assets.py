@@ -4,6 +4,7 @@
 from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel
+from fastapi import UploadFile
 
 
 class AddAsset(BaseModel):
@@ -13,6 +14,7 @@ class AddAsset(BaseModel):
     location: Optional[str] = ""
     owner_id: Optional[str] = ""
     will_to: str
+    document: Optional[UploadFile]
     note: Optional[str]
 
 
@@ -25,6 +27,7 @@ class AddMonetary(BaseModel):
     bank_name: str
     owner_id: Optional[str] = ""
     will_to: str
+    document: Optional[UploadFile]
     note: Optional[str]
 
 
@@ -36,6 +39,7 @@ class AssetRes(BaseModel):
     location: str
     owner_id: str
     will_to: str
+    document: Optional[UploadFile]
     note: str
     created_at: datetime
     # updated_at: datetime
@@ -56,6 +60,7 @@ class MonetaryRes(BaseModel):
     bank_name: str
     owner_id: str
     will_to: str
+    document: Optional[UploadFile]
     note: str
     created_at: datetime
     # updated_at: datetime
@@ -72,6 +77,7 @@ class UpdateAsset(BaseModel):
     name: Optional[str]
     location: Optional[str]
     will_to: Optional[str]
+    document: Optional[UploadFile]
     note: Optional[str]
     updated_at: str = datetime.now()
 
@@ -84,5 +90,6 @@ class UpdateMonetary(BaseModel):
     amount: Optional[str]
     bank_name: Optional[str]
     will_to: Optional[str]
+    document: Optional[UploadFile]
     note: Optional[str]
     updated_at: str = datetime.now()
