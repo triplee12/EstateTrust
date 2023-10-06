@@ -6,8 +6,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from fastapi.testclient import TestClient
 from api.v1.main import app
-from api.v1.authorizations.oauth import create_token
-from api.v1.models.data.users import Base, User
+from api.v1.models.data.users import Base
 from api.v1.models.data.assets import Base as B_asset
 from api.v1.configurations.database import get_db
 from api.v1.configurations.settings import settings
@@ -23,7 +22,7 @@ testing_session_local = sessionmaker(
 )
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="package")
 def session():
     """Fixture: Database session."""
     Base.metadata.drop_all(bind=engine)
@@ -37,7 +36,7 @@ def session():
         db.close()
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="package")
 def client(session):
     """Fixture: Return TestClient."""
     def get_test_db():
@@ -50,7 +49,7 @@ def client(session):
     yield TestClient(app)
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="package")
 def test_user(client):
     """Create a generic test user."""
 
@@ -65,11 +64,11 @@ def test_user(client):
         "date_of_birth": "2000-07-18",
         "gender": "male"
     }
-    res = client.post("/grantors/account/create", json=user_data1)
+    res = client.post("/api/v1/grantors/account/create", json=user_data1)
     assert res.status_code == 201
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="package")
 def test_user1(client):
     """Create a generic test user."""
     user_data1 = {
@@ -83,5 +82,5 @@ def test_user1(client):
         "date_of_birth": "2000-07-18",
         "gender": "female"
     }
-    res = client.post("/grantors/account/create", json=user_data1)
+    res = client.post("/api/v1/grantors/account/create", json=user_data1)
     assert res.status_code == 201
