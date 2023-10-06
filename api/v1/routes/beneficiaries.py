@@ -52,7 +52,7 @@ async def create_beneficiary(
 
 
 @beneficiary_router.get(
-    "/account/user_id/beneficiaries",
+    "/account/{user_id}/beneficiaries",
     response_model=List[BeneficiaryRes]
 )
 async def retrieve_beneficiaries(
@@ -81,7 +81,7 @@ async def retrieve_beneficiaries(
 
 
 @beneficiary_router.get(
-    "/account/{user_id}/beneficiary/{bene_id}",
+    "/account/{user_id}/beneficiaries/{bene_id}",
     response_model=BeneficiaryRes
 )
 async def get_beneficiary(
@@ -112,8 +112,8 @@ async def get_beneficiary(
         )
 
 
-@beneficiary_router.patch(
-    "/account/{grantor_id}/beneficiary/{bene_id}/update",
+@beneficiary_router.put(
+    "/account/{grantor_id}/beneficiaries/{bene_id}/update",
     response_model=BeneficiaryRes
 )
 async def update_beneficiary(
@@ -146,7 +146,7 @@ async def update_beneficiary(
 
 
 @beneficiary_router.delete(
-    "/account/{grantor_id}/beneficiary/{bene_id}/delete",
+    "/account/{grantor_id}/beneficiaries/{bene_id}/delete",
     status_code=status.HTTP_204_NO_CONTENT
 )
 async def delete_beneficiary(
