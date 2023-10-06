@@ -44,6 +44,7 @@ class TrusteeEnum(str, Enum):
     FRIEND = "friend"
     LAWYER = "lawyer"
     SISTER = "sister"
+    WIFE = "wife"
 
 
 class VerifyUser(BaseModel):
@@ -70,7 +71,7 @@ class BaseUser(BaseModel):
 
     first_name: str
     last_name: str
-    middle_name: str
+    middle_name: Optional[str]
 
 
 class RegisterUser(BaseUser):
@@ -89,6 +90,7 @@ class SignInUser(BaseModel):
 
     username: str
     password: str
+    account_type: str
 
 
 class AddTrustee(BaseUser):
@@ -115,7 +117,7 @@ class BeneficiaryRes(BaseModel):
 
     uuid_pk: str
     first_name: str
-    middle_name: str
+    middle_name: Optional[str]
     last_name: str
     relation: str
     added_by: str
@@ -134,7 +136,7 @@ class TrusteeRes(BaseModel):
     uuid_pk: str
     username: str
     first_name: str
-    middle_name: str
+    middle_name: Optional[str]
     last_name: str
     email: EmailStr
     phone_number: str
@@ -155,7 +157,7 @@ class UserRes(BaseModel):
     uuid_pk: str
     username: str
     first_name: str
-    middle_name: str
+    middle_name: Optional[str]
     last_name: str
     email: EmailStr
     phone_number: str

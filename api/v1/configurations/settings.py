@@ -19,6 +19,9 @@ class Settings(BaseSettings):
     EMAIL_PASSWORD: str
     EMAIL_FROM: EmailStr
     ENVIRONMENT: str
+    AWS_ACCESS_KEY: str
+    AWS_SECRET_KEY: str
+    AWS_BUCKET_NAME: str
 
     class Config:
         """Configuration for environment variables."""

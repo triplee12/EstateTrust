@@ -9,6 +9,7 @@ from api.v1.configurations.database import get_db
 from api.v1.models.data.users import User
 from api.v1.models.schemas.assets import AddAsset, AssetRes, UpdateAsset
 from api.v1.repositories.assets import AssetRepository
+from api.v1.utils.documents import download_file, upload_file
 
 asset_router = APIRouter(
     prefix="/assets",
@@ -39,6 +40,8 @@ async def create_asset(
     if current_user.uuid_pk == grantor_id:
         grantor = sess.query(User).filter(User.uuid_pk == grantor_id).first()
         data.owner_id = grantor.uuid_pk
+        up_file = await upload_file(data.document)
+        data.document = up_file["filename"]
         added = repo.add_asset(data=data)
         if added:
             return {
@@ -48,6 +51,17 @@ async def create_asset(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="error occurred while adding asset"
         )
+
+
+@asset_router.get("/asset/download/{file_name}")
+async def download_file_route(
+    file_name: str, grantor_id: str,
+    current_user: str = Depends(get_current_user)
+):
+    """Download file route."""
+    if current_user.uuid_pk == grantor_id:
+        file = await download_file(file_name)
+        return file
 
 
 @asset_router.get(
@@ -129,7 +143,7 @@ async def retrieve_asset(
         )
 
 
-@asset_router.patch(
+@asset_router.put(
     "/{grantor_id}/assets/{asset_id}/update",
     response_model=AssetRes
 )
@@ -148,6 +162,9 @@ async def update_asset(
     """
     repo = AssetRepository(sess)
     if current_user:
+        if data.document:
+            up_file = await upload_file(data.document)
+            data.document = up_file["filename"]
         asset = repo.update_asset(
             user_id=grantor_id, asset_id=asset_id, data=data
         )

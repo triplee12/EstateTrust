@@ -28,6 +28,7 @@ class Asset(Base):
         ForeignKey("users.uuid_pk", ondelete="CASCADE"),
         nullable=False
     )
+    document = Column(String(255), nullable=True)
     will_to = Column(
         PgUUID,
         ForeignKey("beneficiaries.uuid_pk", ondelete="CASCADE"),
@@ -69,6 +70,7 @@ class Monetary(Base):
     acc_number = Column(String(150), nullable=False)
     amount = Column(String(150), nullable=False)
     bank_name = Column(String(255), nullable=False)
+    document = Column(String(255), nullable=True)
     owner_id = Column(
         PgUUID,
         ForeignKey("users.uuid_pk", ondelete="CASCADE"),

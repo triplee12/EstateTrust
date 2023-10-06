@@ -4,14 +4,14 @@
 from typing import List
 from fastapi import APIRouter, HTTPException, Depends, status
 from sqlalchemy.orm import Session
-from api.v1.authorizations.oauth import create_token, get_current_user
+from api.v1.authorizations.oauth import get_current_user
 from api.v1.configurations.database import get_db
 from api.v1.models.data.users import Trustee, User
 from api.v1.models.schemas.users import (
-    AddTrustee, TrusteeRes, UpdateTrustee, SignInUser
+    AddTrustee, TrusteeRes, UpdateTrustee
 )
 from api.v1.repositories.trustees import TrusteeRepository
-from api.v1.utils.passwd import hash_pwd, verify_pwd
+from api.v1.utils.passwd import hash_pwd
 
 trustee_router = APIRouter(prefix="/trustees", tags=["trustees"])
 
@@ -84,7 +84,7 @@ async def retrieve_trustees(
         return trustees
 
 
-@trustee_router.patch(
+@trustee_router.put(
     "/account/{grantor_id}/trustees/{trustee_id}/update",
     response_model=TrusteeRes
 )
@@ -128,26 +128,6 @@ async def delete_trustee_account(
         raise HTTPException(
             status_code=status.HTTP_204_NO_CONTENT,
             detail="account deleted successfully"
-        )
-
-
-@trustee_router.post("/account/trustee/login")
-async def login_trustee(trustee: SignInUser, sess: Session = Depends(get_db)):
-    """Login a trustee."""
-    q_trustee = sess.query(Trustee).filter(
-        Trustee.username == trustee.username
-    ).first()
-    if q_trustee and verify_pwd(trustee.password, q_trustee.password):
-        access_token = create_token(
-            data={
-                "uuid_pk": q_trustee.uuid_pk,
-                "username": q_trustee.username
-            }
-        )
-        return {"access_token": access_token, "token_type": "bearer"}
-    raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid credentials"
         )
 
 
