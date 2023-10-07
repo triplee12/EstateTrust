@@ -87,9 +87,45 @@ Running a FastAPI application involves a few steps, including setting up the env
 
 ## APIs Routes And Documentation
 
+## Authorization and Authentication API Documentation
+
+This API documentation provides information about the Auths API routes for the "Estate Trust" application. The API allows users to log in and access their dashboards, update their accounts, and delete their accounts, and access other utilites and features.
+
+## Base URL
+
+All endpoints are relative to the base URL: `/auths`.
+
+## Login
+
+### `POST /account/login`
+
+Log in a user.
+
+**Request Body**
+
+- `data` (object): An object that contains the login information, including:
+  - `username` (string): The username of the user.
+  - `password` (string): The password of the user.
+
+```json
+{
+  "username": "cBolton",
+  "password": "91accfe2009a"
+}
+```
+
+**Response**
+
+- `200 OK`: The user was successfully logged in.
+  - `access_token` (string): The access token for the user.
+  - `token_type` (string): "bearer"
+  - `id` (string): The ID of the user
+
+- `401 Unauthorized`: Invalid credentials provided.
+
 ## Users API Documentation
 
-This API documentation provides information about the Users API routes for the "Estate Trust" application. The API allows users to create accounts, log in, access their dashboards, update their accounts, and delete their accounts.
+This API documentation provides information about the Users API routes for the "Estate Trust" application. The API allows users to create accounts, access their dashboards, update their accounts, and delete their accounts.
 
 ## Base URL
 
@@ -125,26 +161,6 @@ Create a grantor account.
   - `message` (string): "Account created successfully"
 
 - `422 Unprocessable Entity`: An error occurred while creating the account.
-
-## Login
-
-### `POST /account/login`
-
-Log in a user.
-
-**Request Body**
-
-- `data` (object): An object that contains the login information, including:
-  - `username` (string): The username of the user.
-  - `password` (string): The password of the user.
-
-**Response**
-
-- `200 OK`: The user was successfully logged in.
-  - `access_token` (string): The access token for the user.
-  - `token_type` (string): "bearer"
-
-- `401 Unauthorized`: Invalid credentials provided.
 
 ## Retrieve Grantor's Dashboard
 
@@ -444,45 +460,7 @@ DELETE /trustees/account/{grantor_id}/trustees/{trustee_id}/delete
 
 ---
 
-### 6. Login as a Trustee <a name="login-as-a-trustee"></a>
-
-Login as a trustee to obtain an access token for authentication.
-
-- **HTTP Method:** POST
-- **Endpoint:** `/account/trustee/login`
-- **Request Body:** [SignInUser](#signinuser-request-body)
-- **Response:** Access token and token type on successful login.
-
-#### Request Body (SignInUser) <a name="signinuser-request-body"></a>
-
-```json
-{
-  "username": "string",
-  "password": "string"
-}
-```
-
-- `username` (string, required): The username of the trustee.
-- `password` (string, required): The password of the trustee.
-
-#### Example Request
-
-```http
-POST /trustees/account/trustee/login
-```
-
-#### Example Response
-
-```json
-{
-  "access_token": "string",
-  "token_type": "bearer"
-}
-```
-
----
-
-### 7. Trustee Dashboard <a name="trustee-dashboard"></a>
+### 6. Trustee Dashboard <a name="trustee-dashboard"></a>
 
 Access the trustee dashboard with unlimited access.
 
@@ -663,9 +641,11 @@ All endpoints require authentication. Users must be authenticated to access thes
   Content-Type: application/json
 
   {
-    "name": "Asset Name",
-    "description": "Asset Description",
-    "value": 100000
+    "name": "Four storey building",
+    "location": "Awada Onitsha, Anambra state Nigeria",
+    "will_to": "43725e17-72d5-4def-be70-91accfe2009a",
+    "documents": [], // Optional
+    "note": "I Bob Emmanuel will Three hundred thousand United State dollar ($300,000.00) to my first son MySon."
   }
   ```
 - **Example Response** (HTTP 201 Created):
@@ -755,6 +735,16 @@ All endpoints require authentication. Users must be authenticated to access thes
     "value": 100000
   }
   ```
+
+### Download Asset Document file
+
+- **HTTP Method:** GET
+- **Endpoint:** `/asset/download/{file_name}`
+- **Parameters:**
+  - `file_name` (string): File name of the document.
+- **Authentication:** Required
+- **Response:** List of `MonetaryRes` schemas
+- **Description:** This endpoint download file document.
 
 ### Update Asset
 
@@ -849,10 +839,23 @@ Errors in this API are communicated through HTTP status codes and JSON response 
 ### 1. Create a New Monetary Asset
 
 - **HTTP Method:** POST
-- **Endpoint:** `/monetaries/asset/{grantor_id}/create/monetary`
+- **Endpoint:** `/asset/{grantor_id}/create/monetary`
 - **Parameters:**
   - `grantor_id` (string): ID of the grantor creating the asset.
 - **Request Body (JSON):** `AddMonetary` schema
+
+```json
+{
+  "acc_name": "Okoye Chris Ebuka",
+  "acc_number": "2070000000",
+  "amount": "$300,000.00",
+  "bank_name": "United Bank For Africa (UBA)",
+  "will_to": "43725e17-72d5-4def-be70-91accfe2009a",
+  "documents": [], // Optional
+  "note": "I Bob Emmanuel will Three hundred thousand United State dollar ($300,000.00) to my first son MySon."
+}
+```
+
 - **Authentication:** Required
 - **Response:**
   - 201 Created: Asset created successfully
@@ -862,7 +865,7 @@ Errors in this API are communicated through HTTP status codes and JSON response 
 ### 2. Retrieve All Monetary Assets for a Grantor
 
 - **HTTP Method:** GET
-- **Endpoint:** `/monetaries/asset/asset/{grantor_id}/assets`
+- **Endpoint:** `/asset/grantor/{grantor_id}/assets`
 - **Parameters:**
   - `grantor_id` (string): ID of the grantor to retrieve assets for.
 - **Authentication:** Required
@@ -872,7 +875,7 @@ Errors in this API are communicated through HTTP status codes and JSON response 
 ### 3. Retrieve All Monetary Assets for a Beneficiary
 
 - **HTTP Method:** GET
-- **Endpoint:** `/monetaries/asset/beneficiary/{bene_id}/assets`
+- **Endpoint:** `/asset/beneficiary/{bene_id}/assets`
 - **Parameters:**
   - `bene_id` (string): ID of the beneficiary to retrieve assets for.
 - **Authentication:** Required
@@ -882,7 +885,7 @@ Errors in this API are communicated through HTTP status codes and JSON response 
 ### 4. Retrieve a Monetary Asset
 
 - **HTTP Method:** GET
-- **Endpoint:** `/monetaries/asset/grantor/{grantor_id}/assets/{asset_id}`
+- **Endpoint:** `/asset/grantor/{grantor_id}/assets/{asset_id}`
 - **Parameters:**
   - `grantor_id` (string): ID of the grantor who owns the asset.
   - `asset_id` (string): ID of the asset to retrieve.
@@ -893,7 +896,7 @@ Errors in this API are communicated through HTTP status codes and JSON response 
 ### 5. Update a Monetary Asset
 
 - **HTTP Method:** PUT
-- **Endpoint:** `/monetaries/asset/grantor/{grantor_id}/assets/{asset_id}/update`
+- **Endpoint:** `/asset/grantor/{grantor_id}/assets/{asset_id}/update`
 - **Parameters:**
   - `grantor_id` (string): ID of the grantor who owns the asset.
   - `asset_id` (string): ID of the asset to update.
@@ -905,7 +908,7 @@ Errors in this API are communicated through HTTP status codes and JSON response 
 ### 6. Delete a Monetary Asset
 
 - **HTTP Method:** DELETE
-- **Endpoint:** `/monetaries/asset/grantor/{grantor_id}/assets/{asset_id}/delete`
+- **Endpoint:** `/asset/grantor/{grantor_id}/assets/{asset_id}/delete`
 - **Parameters:**
   - `grantor_id` (string): ID of the grantor who owns the asset.
   - `asset_id` (string): ID of the asset to delete.
