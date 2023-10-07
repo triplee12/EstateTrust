@@ -17,7 +17,7 @@ trustee_router = APIRouter(prefix="/trustees", tags=["trustees"])
 
 
 @trustee_router.post(
-    "/account/{grantor_id}/create/trustees",
+    "/account/{grantor_id}/create/trustee",
     status_code=status.HTTP_201_CREATED
 )
 async def create_trustee(
