@@ -70,7 +70,7 @@ async def download_file_route(
 
 
 @monetary_router.get(
-    "/asset/asset/{grantor_id}/assets",
+    "/asset/grantor/{grantor_id}/assets",
     response_model=List[MonetaryRes]
 )
 async def retrieve_monetary_assets(
