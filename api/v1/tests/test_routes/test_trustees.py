@@ -61,7 +61,7 @@ def test_create_trustee(
         'Authorization': 'Bearer {}'.format(login_data.access_token)
     }
     trustee = client.post(
-        f"/api/v1/trustees/account/{user_id}/create/trustees",
+        f"/api/v1/trustees/account/{user_id}/create/trustee",
         headers=headers, json={
             "first_name": first_name,
             "last_name": last_name,
