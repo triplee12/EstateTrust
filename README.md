@@ -328,7 +328,7 @@ Create a new trustee associated with a grantor (estate owner).
 #### Example Request
 
 ```http
-POST /trustees/account/{grantor_id}/create/trustees
+POST /trustees/account/{grantor_id}/create/trustee
 ```
 
 #### Example Response
