@@ -172,7 +172,13 @@ def test_update_trustee_account(client):
         f"/api/v1/trustees/account/{user_id}/trustees/{trustee_id}/update",
         headers=headers, json={
             "first_name": "John",
-            "last_name": "Bob"
+            "middle_name": "Trustee",
+            "last_name": "Bob",
+            "phone_number": "+12345678900",
+            "email": "mytrustee@gmail.com",
+            "username": "trustee",
+            "password": "password", "relation": "lawyer",
+            "note": "I Ejie Emmanuel Chukwuebuka"
         }
     )
     assert trustee.status_code == 200

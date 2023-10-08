@@ -176,10 +176,22 @@ def test_update_asset(client):
         headers=headers
     )
     asset_id = assets.json()[0]['uuid_pk']
+    beneficiaries = client.get(
+        f"/api/v1/beneficiaries/account/{user_id}/beneficiaries",
+        headers=headers
+    )
     asset = client.put(
         f"/api/v1/monetaries/asset/grantor/{user_id}/assets/{asset_id}/update",
         headers=headers, json={
-            "acc_name": "Okoye Chris Edu"
+            "acc_name": "Okoye Chris Edu",
+            "acc_number": "2070000000",
+            "amount": "$300,000.00",
+            "bank_name": "United Bank For Africa (UBA)",
+            "will_to": beneficiaries.json()[0]["uuid_pk"],
+            "note": """
+            I Ejie Emmanuel Chukwebuka will Three hundred thousand
+            United State dollar ($300,000.00) to my first son MySon.
+            """
         }
     )
     assert asset.status_code == 200

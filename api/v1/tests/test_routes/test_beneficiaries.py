@@ -160,7 +160,9 @@ def test_update_beneficiary(client):
         f"/api/v1/beneficiaries/account/{user_id}/beneficiaries/{bene_id}/update",
         headers=headers, json={
             "first_name": "John",
-            "last_name": "Bob"
+            "middle_name": "Edu",
+            "last_name": "Bob",
+            "relation": "son"
         }
     )
     assert beneficiary.status_code == 200

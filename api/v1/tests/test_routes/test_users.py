@@ -105,7 +105,14 @@ def test_update_account(client):
         headers=headers,
         json={
             "first_name": "Tester",
-            "middle_name": "Yours"
+            "last_name": "Ejie",
+            "middle_name": "Yours",
+            "username": "eBolton",
+            "password": "07067Oliver",
+            "email": "tripleeoliver3@gmail.com",
+            "phone_number": "+2348153836254",
+            "date_of_birth": "2000-07-18",
+            "gender": "male"
         }
     )
     assert grantor.status_code == 200

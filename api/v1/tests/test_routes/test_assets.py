@@ -167,10 +167,19 @@ def test_update_asset(client):
         f"/api/v1/assets/grantor/{user_id}/assets",
         headers=headers
     )
+    beneficiaries = client.get(
+        f"/api/v1/beneficiaries/account/{user_id}/beneficiaries",
+        headers=headers
+    )
     asset = client.put(
         f"/api/v1/assets/{user_id}/assets/{assets.json()[0]['uuid_pk']}/update",
         headers=headers, json={
-            "name": "Updated four storey building"
+            "name": "Updated four storey building",
+            "location": "21 housing Awada Onitsha, Anambra state Nigeria",
+            "will_to": beneficiaries.json()[0]["uuid_pk"],
+            "note": """
+            I Ejie Emmanuel Chukwebuka will Three hundred thousand
+            United State dollar ($300,000.00) to my first son MySon."""
         }
     )
     assert asset.status_code == 200
