@@ -1,14 +1,12 @@
 version: '3'
 services:
   api:
-    build: .
+    image: triplee1/estatetrustv1
     depends_on:
       - postgres
     ports:
-      - 8000:8000
-    volumes:
-      - ./:./:ro
-    command: uvicorn api.v1.main:app --reload
+      - 80:8000
+    command: uvicorn api.v1.main:app --port 80
     env_file:
       - ./.env
   postgres:
