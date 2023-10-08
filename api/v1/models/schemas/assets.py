@@ -15,6 +15,10 @@ class AddAsset(BaseModel):
     owner_id: Optional[str] = ""
     will_to: str
     document: Optional[UploadFile] = None
+    # document1: Optional[UploadFile] = None
+    # document2: Optional[UploadFile] = None
+    # document3: Optional[UploadFile] = None
+    # document4: Optional[UploadFile] = None
     note: Optional[str]
 
 
@@ -28,6 +32,10 @@ class AddMonetary(BaseModel):
     owner_id: Optional[str] = ""
     will_to: str
     document: Optional[UploadFile] = None
+    document1: Optional[UploadFile] = None
+    document2: Optional[UploadFile] = None
+    document3: Optional[UploadFile] = None
+    document4: Optional[UploadFile] = None
     note: Optional[str]
 
 
@@ -39,7 +47,11 @@ class AssetRes(BaseModel):
     location: str
     owner_id: str
     will_to: str
-    document: Optional[UploadFile] = None
+    document: Optional[str] = None
+    document1: Optional[str] = None
+    document2: Optional[str] = None
+    document3: Optional[str] = None
+    document4: Optional[str] = None
     note: str
     created_at: datetime
     # updated_at: datetime
@@ -60,7 +72,11 @@ class MonetaryRes(BaseModel):
     bank_name: str
     owner_id: str
     will_to: str
-    document: Optional[UploadFile] = None
+    document: Optional[str] = None
+    document1: Optional[str] = None
+    document2: Optional[str] = None
+    document3: Optional[str] = None
+    document4: Optional[str] = None
     note: str
     created_at: datetime
     # updated_at: datetime
@@ -78,6 +94,10 @@ class UpdateAsset(BaseModel):
     location: Optional[str]
     will_to: Optional[str]
     document: Optional[UploadFile] = None
+    document1: Optional[UploadFile] = None
+    document2: Optional[UploadFile] = None
+    document3: Optional[UploadFile] = None
+    document4: Optional[UploadFile] = None
     note: Optional[str]
     updated_at: str = datetime.now()
 
@@ -91,5 +111,9 @@ class UpdateMonetary(BaseModel):
     bank_name: Optional[str]
     will_to: Optional[str]
     document: Optional[UploadFile] = None
+    document1: Optional[UploadFile] = None
+    document2: Optional[UploadFile] = None
+    document3: Optional[UploadFile] = None
+    document4: Optional[UploadFile] = None
     note: Optional[str]
     updated_at: str = datetime.now()
