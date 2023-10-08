@@ -29,7 +29,7 @@ jobs:
       AWS_BUCKET_NAME: ${{secrets.AWS_BUCKET_NAME}}
     services:
       postgres:
-        image: postgres
+        image: postgres:latest
         env:
           POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
           POSTGRES_DB: ${{secrets.DB_NAME}}_test

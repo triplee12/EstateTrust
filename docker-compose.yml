@@ -12,9 +12,14 @@ services:
     env_file:
       - ./.env
   postgres:
-    image: postgres
-    env_file:
-      - ./.env
+    image: postgres:latest
+    container_name: estatetrustv1
+    environment:
+      POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
+      POSTGRES_DB: ${{secrets.DB_NAME}}_test
+      POSTGRES_USER: ${{secrets.POSTGRES_USER}}
+    ports:
+      - 5432:5432
     volumes:
       - postgres-db:/var/lib/postgres/data
 
