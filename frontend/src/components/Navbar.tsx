@@ -18,7 +18,11 @@ import {
   Image,
 } from '@chakra-ui/react'
 import { MoonIcon, SunIcon } from '@chakra-ui/icons'
-// import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { selectAuth } from '../slice/authenticationSlice'
+import { selectProfile } from '../slice/profileSlice'
+import { logoutAsync } from '../thunks/authenticationThunk'
+import { useNavigate } from 'react-router-dom'
 import Logo from '../assets/images/house-lock.png'
 
 interface Props {
@@ -45,13 +49,32 @@ const NavLink = (props: Props) => {
   );
 }
 
-export default function Nav({ isLoggedIn }: Props) {
+export default function Nav() {
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const auth = useSelector((selectAuth));
+  const profile = useSelector((selectProfile));
+
+  const handleLogout = async () => {
+    try {
+      // Dispatch the loginAsync action and wait for it to complete
+      await dispatch(logoutAsync()).unwrap();
+      localStorage.removeItem('account_type');
+
+      // If the logout action completes successfully, redirect to the login page
+      navigate('/login');
+    } catch (error) {
+      // If the loginAsync action fails, handle the error here
+      console.error('Failed to log out:', error);
+    }
+  };
+
 
   return (
     <>
-      <Box bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
+      <Box bg={useColorModeValue('gray.100', 'gray.900')} px={5}>
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
           <Box>
             <Link href={'/'}>
@@ -65,7 +88,7 @@ export default function Nav({ isLoggedIn }: Props) {
                 {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
               </Button>
 
-              {isLoggedIn ? (
+              {auth.authenticated ? (
                 <Menu>
                   <MenuButton
                     as={Button}
@@ -88,16 +111,18 @@ export default function Nav({ isLoggedIn }: Props) {
                     </Center>
                     <br />
                     <Center>
-                      <p>Username</p>
+                      <p>{profile?.data?.username}</p>
                     </Center>
                     <br />
                     <MenuDivider />
                     <MenuItem>Account Settings</MenuItem>
-                    <MenuItem>Logout</MenuItem>
+                    <MenuItem
+                    onClick={handleLogout}
+                    >Logout</MenuItem>
                   </MenuList>
                 </Menu>
               ) : (
-                <NavLink isLoggedIn={isLoggedIn}>Login</NavLink>
+                <NavLink isLoggedIn={auth.authenticated}>Login</NavLink>
               )}
             </Stack>
           </Flex>

@@ -1,4 +1,4 @@
-import { get, post, put, del } from './apiHelpers';
+import { get, post, put, del } from './apiWithFormData';
 import { AxiosResponse } from 'axios';
 
 

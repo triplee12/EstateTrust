@@ -11,30 +11,52 @@ import {
   Heading,
   Link,
   Text,
+  Select,
   useColorModeValue,
   HStack,
+  Spinner,
 } from '@chakra-ui/react';
 import { Formik, Form, Field, ErrorMessage } from 'formik'; // Import Formik components
 import * as Yup from 'yup'; // Import Yup for validation
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginAsync, LoginData } from '../../thunks/authenticationThunk';
+import { selectAuth, clearError } from '../../slice/authenticationSlice';
+import { AppDispatch } from '../../store';
 
 export default function Login() {
   const navigate = useNavigate();
+  const dispatch: AppDispatch = useDispatch();
+  const auth = useSelector(selectAuth);
 
   // Validation schema using Yup
   const validationSchema = Yup.object().shape({
     username: Yup.string().required('Username is required'),
-    password: Yup.string().required('Password is required'),
+    password: Yup.string().required('Password is required').min(8),
+    account_type: Yup.string().required('Account type is required'),
   });
 
   // Handle form submission
-  const handleLogin = (values: object) => {
-    // Perform login logic here (e.g., API call)
-    console.log('Logging in with values:', values);
+  const handleLogin = async (values: LoginData) => {
+    try {
+      // Dispatch the loginAsync action and wait for it to complete
+      await dispatch(loginAsync(values)).unwrap();
 
-    // Redirect to the dashboard page on successful login
-    navigate('/dashboard');
+      localStorage.setItem('account_type', values.account_type);
+
+      // If the loginAsync action completes successfully, redirect to the dashboard page
+      navigate('/dashboard');
+    } catch (error) {
+      // If the loginAsync action fails, handle the error here
+      console.error('Failed to log in:', error);
+    }
   };
+
+  if (auth.error) {
+    setTimeout(() => {
+      dispatch(clearError());
+    }, 10000);
+  }
 
   return (
     <Flex
@@ -53,13 +75,18 @@ export default function Login() {
           p={8}>
           {/* Use Formik to handle form state */}
           <Formik
-            initialValues={{ username: '', password: '' }}
+            initialValues={{ username: '', password: '', account_type: '',}}
             validationSchema={validationSchema}
             onSubmit={handleLogin}
           >
             {(formik) => (
               <Form>
                 <Stack spacing={4}>
+                  {auth.error && (
+                    <Text color="#BF360C" fontSize="md" textAlign="center" mt={2}>
+                      {auth.error}
+                    </Text>
+                  )}
                   <FormControl id="username">
                     <FormLabel>Username</FormLabel>
                     <Field
@@ -71,9 +98,23 @@ export default function Login() {
                     <ErrorMessage
                       name="username"
                       component="div"
-                      style={{ color: 'red' }}
+                      style={{ color: '#BF360C', marginTop: '0.25rem'}}
                     />
                   </FormControl>
+                  <FormControl id="account_type" isRequired>
+                    <FormLabel>Account Type</FormLabel>
+                    <Field as={Select} name="account_type" placeholder="Select account type">
+                      <option value="" disabled>Select account type</option>
+                      <option value="grantor">Grantor</option>
+                      <option value="trustee">Trustee</option>
+                    </Field>
+                    <ErrorMessage
+                      name="account_type"
+                      component="div"
+                      style={{ color: '#BF360C', marginTop: '0.25rem'}}
+                    />
+                  </FormControl>
+
                   <FormControl id="password">
                     <FormLabel>Password</FormLabel>
                     <Field
@@ -85,7 +126,7 @@ export default function Login() {
                     <ErrorMessage
                       name="password"
                       component="div"
-                      style={{ color: 'red' }}
+                      style={{ color: '#BF360C', marginTop: '0.25rem'}}
                     />
                   </FormControl>
                   <Stack
@@ -116,6 +157,7 @@ export default function Login() {
                   >
                     Sign in
                   </Button>
+                  {/* {auth.status === 'loading' && <Spinner />} */}
                 </Stack>
               </Form>
             )}

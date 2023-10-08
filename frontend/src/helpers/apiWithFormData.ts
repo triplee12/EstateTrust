@@ -6,7 +6,7 @@ const api: AxiosInstance = axios.create({
   // timeout: 5000, // Set a timeout for requests (optional)
   // withCredentials: true,
   headers: {
-    'Content-Type': 'application/json',
+    'Content-Type': 'multipart/form-data',
     // You can set default headers here (e.g., authorization token)
   },
 });

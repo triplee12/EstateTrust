@@ -1,121 +1,143 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
+  Tr,
+  Th,
+  Td,
   Box,
   Flex,
-  IconButton,
   Spacer,
   VStack,
   Heading,
-  useBreakpointValue,
-  Drawer,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
-  DrawerHeader,
-  DrawerBody,
-  DrawerFooter,
-  SimpleGrid,
   Text,
   HStack,
   Table,
   Thead,
   Tbody,
-  Tr,
-  Th,
-  Td,
   Button,
+  IconButton,
+  Tooltip,
+  useToast,
+  useDisclosure,
+  useBreakpointValue,
+  useColorModeValue,
 } from '@chakra-ui/react';
-import { HamburgerIcon, DeleteIcon } from '@chakra-ui/icons';
-import { Link } from 'react-router-dom';
+import { HamburgerIcon, DeleteIcon, ArrowUpIcon } from '@chakra-ui/icons';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectProfile } from '../slice/profileSlice';
+import { selectAuth } from '../slice/authenticationSlice';
+import { fetchProfileData } from '../thunks/profileThunk';
+import { AddBeneficiaryApiResponse } from '../thunks/beneficiaryThunk';
+import { deleteAssetsAsync } from '../thunks/assetsThunk';
+import { deleteBeneficiaryAsync } from '../thunks/beneficiaryThunk';
+import { deleteTrusteeAsync } from '../thunks/trusteeThunk';
+import { deleteMonetaryAsync } from '../thunks/monetaryThunk';
+import Sidebar from './SideBar';
 
-// Sample data for assets and beneficiaries
-const sampleAssets = [
-  { id: 1, name: "Asset 1", quantity: 10, beneficiaries: "Beneficiary 1, Beneficiary 2", file: "file.pdf" },
-  { id: 2, name: "Asset 2", quantity: 5, beneficiaries: "Beneficiary 3, Beneficiary 4", file: "file.doc" },
-  // Add more assets as needed
-];
-
-const Sidebar = () => {
-  return (
-    <Flex direction="column" h="100%" bg="gray.800" color="white" p="4" border={"1px"}>
-      <Link to="/" > <Button marginY={1}>Home</Button></Link>
-      <Link to="/add-assets"><Button marginY={1}>Add Assets</Button></Link>
-      <Link to="/add-beneficiaries"><Button marginY={1}>Add Beneficiaries</Button></Link>
-      <Link to="/add-assets"><Button marginY={1}>Set Counsel</Button></Link>
-    </Flex>
-  );
-};
 
 const Dashboard = () => {
-  const [assets, setAssets] = useState(sampleAssets);
+  const [assets, setAssets] = useState([]);
   const isDrawer = useBreakpointValue({ base: true, lg: false });
-  const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
+  const dispatch = useDispatch();
+  const auth = useSelector(selectAuth);
+  const profile = useSelector(selectProfile);
 
-  const handleDrawerOpen = () => {
-    setIsDrawerOpen(true);
-  };
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate();
+  const toast = useToast();
 
-  const handleDrawerClose = () => {
-    setIsDrawerOpen(false);
-  };
+  const account_type = localStorage.getItem('account_type');
+  const isTrustee: boolean = account_type === 'trustee';
 
-  const deleteAsset = async (id: number) => {
+  const deleteAsset = async (deleteType: string, id: string) => {
     // Make API call to delete the asset with the given id
     try {
       // Your API call logic goes here
+      if (deleteType === 'physical') {
+        await dispatch(deleteAssetsAsync({grantor_id: profile.data?.uuid_pk, asset_id: id})).unwrap();
+      }
+      else if (deleteType === 'monetary') {
+        await dispatch(deleteMonetaryAsync({grantor_id: profile.data?.uuid_pk, asset_id: id})).unwrap();
+      }
+      else if (deleteType === 'trustee') {
+        await dispatch(deleteTrusteeAsync({grantor_id: profile.data?.uuid_pk, trustee_id: id})).unwrap();
+      }
+      else if (deleteType === 'beneficiary') {
+        await dispatch(deleteBeneficiaryAsync({grantor_id: profile.data?.uuid_pk, bene_id: id})).unwrap();
+      }
 
-      // Assuming the API call is successful, update the state to reflect the deletion
-      setAssets((prevAssets) => prevAssets.filter((asset) => asset.id !== id));
+      toast({
+        title: 'Deleted Successfully',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
+
     } catch (error) {
       console.error('Error deleting asset:', error);
+
+      toast({
+        title: 'Error',
+        description: 'Deletion was not successful.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 
+  function findFirstNameById(id: string, objectList: AddBeneficiaryApiResponse[]) {
+    const matchingObject = objectList.find(obj => obj.uuid_pk === id);
+
+    if (matchingObject) {
+      return matchingObject.first_name;
+    } else {
+      return null; // or throw new Error('Object not found');
+    }
+}
+
+
+  useEffect(() =>{
+    try {
+      dispatch(fetchProfileData(auth.id)).unwrap();
+    } catch (error) {
+      console.log(error);
+    }
+  }, [auth.id, dispatch]);
+
+  useEffect(() => {
+    setAssets(profile?.data?.assets)
+  }, [profile]);
+
   return (
-    <Flex m={4}>
-      {/* Sidebar for Large Screens */}
-      {!isDrawer && <Sidebar />}
-
-      <Box flex="1" ml={!isDrawer ? '240px' : '0'}>
-        {/* Menu Button for Small Screens */}
-        {isDrawer && (
-          <>
-            <IconButton
-              icon={<HamburgerIcon />}
-              onClick={handleDrawerOpen}
-              aria-label="Open Menu"
-              variant="outline"
-              colorScheme="white"
-              m="4"
-              display={{ lg: 'none' }}
-            />
-            <Drawer isOpen={isDrawerOpen} placement="right" onClose={handleDrawerClose}>
-              <DrawerOverlay />
-              <DrawerContent>
-                <DrawerCloseButton />
-                <DrawerHeader>Menu</DrawerHeader>
-                <DrawerBody>
-                  <Sidebar />
-                </DrawerBody>
-                <DrawerFooter>
-                  {/* Additional Drawer Footer Content */}
-                </DrawerFooter>
-              </DrawerContent>
-            </Drawer>
-          </>
-        )}
-
-        <Box mb={8}>
+    <>
+    <Box flex="1" >
+    <HStack m={4}>
+      <Box w={'20%'} boxShadow={'lg'}
+      rounded={'lg'}
+      >
+        <Sidebar />
+      </Box>
+      <VStack m={4} align="left" w="50%">
+        <Box mb={8}
+          rounded={'lg'}
+          bg={useColorModeValue('white', 'gray.700')}
+          boxShadow={'lg'}
+          p={8}
+          maxH="300px"  // Adjust the height as needed
+          overflowY="auto"
+        >
           <Heading size="md" mb={4}>
-            Assets
+            Physical Assets
           </Heading>
           <Table variant="simple">
             <Thead>
               <Tr>
                 <Th>Asset Name</Th>
-                <Th>Quantity</Th>
-                <Th>Beneficiaries</Th>
-                <Th>File</Th>
+                <Th>Location</Th>
+                <Th>Beneficiary</Th>
+                {/* <Th>File</Th> */}
+                <Th>Update</Th>
                 <Th>Delete</Th>
               </Tr>
             </Thead>
@@ -123,16 +145,26 @@ const Dashboard = () => {
               {assets.map((asset) => (
                 <Tr key={asset.id}>
                   <Td>{asset.name}</Td>
-                  <Td>{asset.quantity}</Td>
-                  <Td>{asset.beneficiaries}</Td>
-                  <Td>{asset.file}</Td>
+                  <Td>{asset.location}</Td>
+                  <Td>{findFirstNameById(asset.will_to, profile.data?.beneficiaries)}</Td>
+                  {/* <Td>{asset.documents}</Td> */}
+                  <Td>
+                    <IconButton
+                      icon={<ArrowUpIcon />}
+                      colorScheme="red"
+                      variant="outline"
+                      onClick={() => deleteAsset(asset.id)}
+                      aria-label='Delete Asset'
+                    />
+                  </Td>
                   <Td>
                     <IconButton
                       icon={<DeleteIcon />}
                       colorScheme="red"
                       variant="outline"
-                      onClick={() => deleteAsset(asset.id)}
+                      onClick={() => deleteAsset('physical', asset.uuid_pk)}
                       aria-label='Delete Asset'
+                      isDisabled={isTrustee}
                     />
                   </Td>
                 </Tr>
@@ -140,8 +172,150 @@ const Dashboard = () => {
             </Tbody>
           </Table>
         </Box>
+
+        <Box mb={8}
+          rounded={'lg'}
+          bg={useColorModeValue('white', 'gray.700')}
+          boxShadow={'lg'}
+          p={8}
+          maxH="300px"  // Adjust the height as needed
+          overflowY="auto"
+        >
+          <Heading size="md" mb={4}>
+            Monetary Assets
+          </Heading>
+          <Table variant="simple">
+            <Thead>
+              <Tr>
+                <Th>Bank Name</Th>
+                <Th>Amount</Th>
+                <Th>Beneficiary</Th>
+                <Th>Update</Th>
+                <Th>Delete</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {profile.data?.monetaries.map((money) => (
+                <Tr key={money.uuid_pk}>
+                  <Td>{money.bank_name}</Td>
+                  <Td>{money.amount}</Td>
+                  <Td>{findFirstNameById(money.will_to, profile.data?.beneficiaries)}</Td>
+                  <Td>
+                    <IconButton
+                      icon={<ArrowUpIcon />}
+                      colorScheme="red"
+                      variant="outline"
+                      onClick={() => deleteAsset(asset.id)}
+                      aria-label='Delete Asset'
+                    />
+                  </Td>
+                  <Td>
+                    <IconButton
+                      icon={<DeleteIcon />}
+                      colorScheme="red"
+                      variant="outline"
+                      onClick={() => deleteAsset('monetary', asset.id)}
+                      aria-label='Delete Asset'
+                      isDisabled={isTrustee}
+                    />
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </Box>
+      </VStack>
+      <VStack>
+
+        <Box m={4}
+          rounded={'lg'}
+          bg={useColorModeValue('white', 'gray.700')}
+          boxShadow={'lg'}
+          p={8}
+          maxH="300px"  // Adjust the height as needed
+          overflowY="auto"
+          >
+
+          <Heading size="md" mb={4}>
+            Trustees
+          </Heading>
+          <Table variant="simple">
+            <Thead>
+              <Tr>
+                <Th>First Name</Th>
+                <Th>Last Name</Th>
+                <Th>Title</Th>
+                <Th>Delete</Th>
+              </Tr>
+            </Thead>
+            <Tbody >
+              {profile.data?.executors.map((trustee) => (
+                <Tr key={trustee.uuid_pk}>
+                  <Td>{trustee.first_name}</Td>
+                  <Td>{trustee.last_name}</Td>
+                  <Td>{trustee.relation}</Td>
+                  <Td>
+                    <IconButton
+                      icon={<DeleteIcon />}
+                      colorScheme="red"
+                      variant="outline"
+                      onClick={() => deleteAsset('trustee', trustee.uuid_pk)}
+                      aria-label='Delete Asset'
+                      isDisabled={isTrustee}
+                    />
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </Box>
+        <Box m={4}
+          rounded={'lg'}
+          bg={useColorModeValue('white', 'gray.700')}
+          boxShadow={'lg'}
+          p={8}
+          maxH="300px"  // Adjust the height as needed
+          overflowY="auto"
+          >
+
+          <Heading size="md" mb={4}>
+            Beneficiaries
+          </Heading>
+          <Table variant="simple">
+            <Thead>
+              <Tr>
+                <Th>First Name</Th>
+                <Th>Last Name</Th>
+                <Th>Relation</Th>
+                <Th>Delete</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {profile.data?.beneficiaries.map((item) => (
+                <Tr key={item.uuid_pk}>
+                  <Td>{item.first_name}</Td>
+                  <Td>{item.last_name}</Td>
+                  <Td>{item.relation}</Td>
+                  {/* <Td>{item.file}</Td> */}
+                  <Td>
+                    <IconButton
+                      icon={<DeleteIcon />}
+                      colorScheme="red"
+                      variant="outline"
+                      onClick={() => deleteAsset('trustee', item.uuid_pk)}
+                      aria-label='Delete Asset'
+                      isDisabled={isTrustee}
+                    />
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </Box>
+      </VStack>
+    </HStack>
       </Box>
-    </Flex>
+    </>
   );
 };
 

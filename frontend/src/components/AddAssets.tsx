@@ -1,121 +1,124 @@
-import React, { useState } from 'react';
-import {
-  Box,
-  VStack,
-  Heading,
-  FormControl,
-  FormLabel,
-  Input,
-  Select,
-  Button,
-  useToast,
-  FormHelperText,
-} from '@chakra-ui/react';
-
-// Sample data for beneficiaries
-const beneficiariesList = ["Beneficiary 1", "Beneficiary 2", "Beneficiary 3"];
+import React from 'react';
+import { Box, VStack, Heading, FormControl, FormLabel, Input, Select, Button, useToast, FormHelperText, FormErrorMessage } from '@chakra-ui/react';
+import { useFormik } from 'formik';
+import { useDispatch, useSelector } from 'react-redux';
+import { addAssetsAsync } from '../thunks/assetsThunk';
+import { selectProfile } from '../slice/profileSlice';
+import { useNavigate } from 'react-router-dom';
+import { Asset } from '../thunks/assetsThunk';
 
 const AddAssets = () => {
-  const [assetName, setAssetName] = useState('');
-  const [quantity, setQuantity] = useState('');
-  const [yearAcquired, setYearAcquired] = useState('');
-  const [beneficiary, setBeneficiary] = useState('');
-  const [files, setFiles] = useState([]);
-
+  const dispatch = useDispatch();
   const toast = useToast();
+  const navigate = useNavigate();
+  const profile = useSelector(selectProfile);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const formik = useFormik({
+    initialValues: {
+      name: '',
+      location: '',
+      will_to: '',
+      note: '',
+      // documents: [],
+    },
+    onSubmit: async (values:Asset) => {
+      try {
+        // Dispatch the action to add assets
+        await dispatch(addAssetsAsync({userData: values, grantor_id: profile.data?.uuid_pk})).unwrap();
 
-    // Validate form inputs
-    if (!assetName || !quantity || !yearAcquired || !beneficiary || files.length === 0) {
-      toast({
-        title: 'Error',
-        description: 'Please fill in all required fields.',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
+        // Reset form fields after successful submission
+        formik.resetForm();
 
-    // Perform the necessary logic to add the asset (e.g., API call)
-    // ...
+        toast({
+          title: 'Asset Added',
+          description: 'The asset has been successfully added.',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
 
-    // Reset form fields after successful submission
-    setAssetName('');
-    setQuantity('');
-    setYearAcquired('');
-    setBeneficiary('');
-    setFiles([]);
+        navigate('/dashboard');
+      } catch (error) {
+        console.error('Error adding asset:', error);
 
-    toast({
-      title: 'Asset Added',
-      description: 'The asset has been successfully added.',
-      status: 'success',
-      duration: 3000,
-      isClosable: true,
-    });
-  };
+        toast({
+          title: 'Error',
+          description: 'An error occurred while adding the asset.',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    },
+  });
 
   return (
     <Box p="4" m={20}>
       <Heading size="md" mb={4}>
         Add Assets
       </Heading>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={formik.handleSubmit} encType='multipart/form-data'>
         <VStack spacing="4" align="stretch">
           <FormControl isRequired>
             <FormLabel>Asset Name</FormLabel>
             <Input
               type="text"
-              value={assetName}
-              onChange={(e) => setAssetName(e.target.value)}
+              {...formik.getFieldProps('name')}
             />
           </FormControl>
 
           <FormControl isRequired>
-            <FormLabel>Quantity</FormLabel>
+            <FormLabel>Location</FormLabel>
             <Input
-              type="number"
-              value={quantity}
-              onChange={(e) => setQuantity(e.target.value)}
+              type="text"
+              {...formik.getFieldProps('location')}
             />
           </FormControl>
 
+
           <FormControl isRequired>
-            <FormLabel>Year Acquired</FormLabel>
+            <FormLabel>Note</FormLabel>
             <Input
-              type="number"
-              value={yearAcquired}
-              onChange={(e) => setYearAcquired(e.target.value)}
+              type="text"
+              {...formik.getFieldProps('note')}
             />
           </FormControl>
 
           <FormControl isRequired>
             <FormLabel>Beneficiary</FormLabel>
             <Select
-              value={beneficiary}
-              onChange={(e) => setBeneficiary(e.target.value)}
+              {...formik.getFieldProps('will_to')}
             >
               <option value="" disabled>Select Beneficiary</option>
-              {beneficiariesList.map((name) => (
-                <option key={name} value={name}>{name}</option>
+              {profile.data?.beneficiaries.map((item) => (
+                <option key={item.uuid_pk} value={item.uuid_pk}>{item.first_name}</option>
               ))}
             </Select>
           </FormControl>
 
-          <FormControl isRequired>
+          {/* <FormControl
+            id="documents"
+            isInvalid={formik.errors.documents && formik.touched.documents}
+            
+          >
             <FormLabel>Files</FormLabel>
             <Input
               type="file"
               multiple
-              onChange={(e) => setFiles([...files, ...e.target.files])}
+              onChange={(event) => {
+                formik.setFieldValue(
+                  'documents',
+                  Array.from(event.target.files)
+                );
+              }}
+              onBlur={formik.handleBlur}
             />
             <FormHelperText>Multiple files can be added.</FormHelperText>
-          </FormControl>
+            <FormErrorMessage>{formik.errors.documents}</FormErrorMessage>
+          </FormControl> */}
 
-          <Button type="submit" colorScheme="teal">
+          <Button type="submit" colorScheme="teal"
+          isLoading={formik.isSubmitting}>
             Add Asset
           </Button>
         </VStack>
