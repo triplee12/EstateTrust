@@ -6,12 +6,11 @@ from fastapi import APIRouter, HTTPException, Depends, status
 from sqlalchemy.orm import Session
 from api.v1.authorizations.oauth import get_current_user
 from api.v1.configurations.database import get_db
-from api.v1.models.data.users import User
 from api.v1.models.schemas.assets import (
     AddMonetary, MonetaryRes, UpdateMonetary
 )
 from api.v1.repositories.monetaries import MonetaryRepository
-from api.v1.utils.documents import download_file, upload_file
+from api.v1.utils.documents import upload_file
 
 monetary_router = APIRouter(
     prefix="/monetaries",
@@ -39,14 +38,14 @@ async def create_monetary_asset(
     """
     repo = MonetaryRepository(sess)
     if current_user.uuid_pk == grantor_id:
-        grantor = sess.query(User).filter(User.uuid_pk == grantor_id).first()
-        data.owner_id = grantor.uuid_pk
+        data.owner_id = grantor_id
         if data.document is not None:
             up_file = await upload_file(
-                grantor.uuid_pk,
+                grantor_id,
                 data.document
             )
             data.document = up_file["filename"]
+            added = repo.add_monetary_asset(data=data)
         added = repo.add_monetary_asset(data=data)
         if added:
             return {
@@ -56,17 +55,6 @@ async def create_monetary_asset(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="error occurred while adding asset"
         )
-
-
-@monetary_router.get("/asset/download/{file_name}")
-async def download_file_route(
-    file_name: str, grantor_id: str,
-    current_user: str = Depends(get_current_user)
-):
-    """Download file route."""
-    if current_user.uuid_pk == grantor_id:
-        file = await download_file(file_name)
-        return file
 
 
 @monetary_router.get(
@@ -179,17 +167,17 @@ async def update_asset(
     """
     repo = MonetaryRepository(sess)
     if current_user:
-        grantor = sess.query(User).filter(
-            User.uuid_pk == grantor_id
-        ).first()
         if data.document is not None:
             up_file = await upload_file(
-                grantor.uuid_pk,
+                grantor_id,
                 data.document
             )
             data.document = up_file["filename"]
+            asset = repo.update_asset(
+                grantor_id=grantor_id, asset_id=asset_id, data=data
+            )
         asset = repo.update_asset(
-            grantor_id=grantor.uuid_pk, asset_id=asset_id, data=data
+            grantor_id=grantor_id, asset_id=asset_id, data=data
         )
         if asset:
             return asset
@@ -220,11 +208,8 @@ async def delete_asset(
     """
     repo = MonetaryRepository(sess)
     if current_user:
-        grantor = sess.query(User).filter(
-            User.uuid_pk == grantor_id
-        ).first()
         asset = repo.delete_asset(
-            grantor_id=grantor.uuid_pk, asset_id=asset_id
+            grantor_id=grantor_id, asset_id=asset_id
         )
         if asset:
             return

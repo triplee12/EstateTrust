@@ -16,9 +16,9 @@ up_date = f"_{datetime.now().date()}"
 async def upload_file(uuid_pk: str, file: UploadFile):
     """Upload a document file to local storage."""
     if file.filename:
-        file.filename = file.filename + uuid_pk + up_date
+        file.filename = uuid_pk + up_date + file.filename
     else:
-        file.filename = uuid_pk + up_date
+        file.filename = uuid_pk + up_date + file.filename
     file_path = os.path.join(UPLOAD_DIR, file.filename)
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
@@ -37,9 +37,9 @@ s3 = boto3.client(
 async def aws_s3_upload_file(uuid_pk: str, file: UploadFile):
     """Upload a file to the AWS Cloud Storage."""
     if file.filename:
-        file.filename = file.filename + uuid_pk + up_date
+        file.filename = uuid_pk + up_date + file.filename
     else:
-        file.filename = uuid_pk + up_date
+        file.filename = uuid_pk + up_date + file.filename
     try:
         s3.upload_fileobj(
             file.file,
