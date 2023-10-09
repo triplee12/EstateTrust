@@ -43,6 +43,15 @@ jobs:
           --health-retries 5
     runs-on: ubuntu-latest
     steps:
+      - name: Create Database and User
+        run: |
+          psql -U ${{ secrets.POSTGRES_USER }} -h localhost -c "CREATE DATABASE ${{ secrets.DB_NAME }};"
+          psql -U ${{ secrets.POSTGRES_USER }} -h localhost -c "CREATE USER ${{ secrets.DB_NAME }} WITH PASSWORD '${{ secrets.POSTGRES_PASSWORD }}';"
+          psql -U ${{ secrets.POSTGRES_USER }} -h localhost -c "GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.DB_NAME }} TO ${{ secrets.DB_NAME }};"
+
+      - name: Clean up
+        run: |
+          psql -U ${{ secrets.POSTGRES_USER }} -h localhost -c "ALTER USER ${{ secrets.DB_NAME }} CREATEDB;"
       - name: Pulling from git repo
         uses: actions/checkout@v2
       - name: Setup Python 3.10
