@@ -1,0 +1,106 @@
+name: Build and Deploy
+on:
+  push:
+    branches:
+      - "main"
+      - "backend"
+  pull_request:
+    branches:
+      - "backend"
+      - "main"
+jobs:
+  job_1_build:
+    environment:
+      name: testing
+    env:
+      OAUTH2_SECRET_KEY: ${{ secrets.OAUTH2_SECRET_KEY }}
+      DB_USER_PASSW: ${{ secrets.DB_USER_PASSW }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      ACCESS_TOKEN_EXPIRE_WEEKS: ${{ secrets.ACCESS_TOKEN_EXPIRE_WEEKS }}
+      ALGORITHM: ${{ secrets.ALGORITHM }}
+      EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
+      EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
+      EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
+      EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+      EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+      ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
+      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+      AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+      AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{secrets.DB_NAME}}_test
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+        ports:
+          - 5432:5432
+        run: |
+          docker run -e POSTGRES_PASSWORD=${{ POSTGRES_PASSWORD }}
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pulling from git repo
+        uses: actions/checkout@v2
+      - name: Setup Python 3.10
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.10"
+      - name: Update PIP
+        run: python3 -m pip install --upgrade pip
+      - name: Install Project Dependencies
+        run: pip install -r requirements.txt
+      - name: Install Pytest and Run Tests
+        run: |
+          pip install pytest
+          pytest -W ignore::DeprecationWarning -W ignore::UserWarning -vv -s
+      - name: Setting Up Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USER_NAME }}
+          password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+      - name: Setup Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Build And Deploy
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: ./
+          file: ./Dockerfile
+          builder: ${{ steps.buildx.outputs.name }}
+          push: true
+          tags: ${{ secrets.DOCKER_USER_NAME }}/estatetrustv1:latest
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+      - name: Image Digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
+  # job_2_deploy:
+  #   runs-on: ubuntu-latest
+  #   needs: [job_1_build]
+  #   environment:
+  #     name: production
+  #   steps:
+  #     - name: Pulling from git repo
+  #       uses: actions/checkout@v2
+  #     - name: Deploy Latest Build
+  #       uses: akhileshns/heroku-deploy@v3.12.12
+  #       with:
+  #         heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
+  #         heroku_email: ${{secrets.HEROKU_EMAIL}}
+  #         heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+  #     - name: Deploy To Ubuntu
+  #       uses: appleboy/ssh-action@master
+  #       with:
+  #         host: ${{secrets.UBUNTU_HOST_IP}}
+  #         username: ${{secrets.UBUNTU_USER}}
+  #         password: ${{secrets.UBUNTU_SSH_KEY}}
+  #         script: |
+  #           cd api/src
+  #           git pull
+  #           echo ${{secrets.UBUNTU_SSH_KEY}} | sudo -S systemctl restart api
