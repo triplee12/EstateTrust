@@ -53,6 +53,8 @@ jobs:
         run: python3 -m pip install --upgrade pip
       - name: Install Project Dependencies
         run: pip install -r requirements.txt
+      - name: Set up PostgreSQL
+        uses: ahebrank/setup-postgresql@v1
       - name: Create Database and User
         run: |
           psql -U ${{ secrets.POSTGRES_USER }} --password ${{ secrets.POSTGRES_PASSWORD }} -c "CREATE DATABASE ${{ secrets.DB_NAME }}_test;"
