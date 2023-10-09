@@ -1,16 +1,16 @@
-import React from 'react';
 import { Box, VStack, Heading, FormControl, FormLabel,
-        Input, Button, useToast,Select, FormHelperText } from '@chakra-ui/react';
+        Input, Button, useToast,Select } from '@chakra-ui/react';
 import { useFormik } from 'formik';
 import { useDispatch } from 'react-redux';
-import { addMonetaryAsync } from '../thunks/monetaryThunk'; // Assuming you have a thunk for adding monetary assets
+import { addMonetaryAsync, Monetary } from '../thunks/monetaryThunk'; // Assuming you have a thunk for adding monetary assets
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectProfile } from '../slice/profileSlice';
-
+import {AddBeneficiaryApiResponse} from '../thunks/beneficiaryThunk'
+import { AppDispatch } from '../store';
 
 const AddMonetary = () => {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const toast = useToast();
   const navigate = useNavigate();
   const profile = useSelector(selectProfile);
@@ -24,12 +24,15 @@ const AddMonetary = () => {
       will_to: '',
       note: '',
     },
-    onSubmit: async (values) => {
+    onSubmit: async (values: Monetary) => {
       try {
-        // console.log(values)
-        // console.log(profile.data?.uuid_pk)
-        // Dispatch the action to add monetary assets
-        await dispatch(addMonetaryAsync({userData: values, grantorId: profile.data?.uuid_pk})).unwrap();
+        if (profile.data?.uuid_pk) {
+          // Dispatch the action to add monetary assets
+          await dispatch(addMonetaryAsync({userData: values, grantorId: profile.data?.uuid_pk})).unwrap();
+        }
+        else {
+          throw new Error("Profile uuid not found");
+        }
 
         // Reset form fields after successful submission
         formik.resetForm();
@@ -102,7 +105,7 @@ const AddMonetary = () => {
               {...formik.getFieldProps('will_to')}
             >
               <option value="" disabled>Select Beneficiary</option>
-              {profile.data?.beneficiaries.map((item) => (
+              {profile.data?.beneficiaries.map((item: AddBeneficiaryApiResponse) => (
                 <option key={item.uuid_pk} value={item.uuid_pk}>{item.first_name}</option>
               ))}
             </Select>

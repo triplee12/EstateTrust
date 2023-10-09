@@ -35,7 +35,7 @@ export const updateData = async <T>(url: string, data: object): Promise<AxiosRes
 
 export const deleteData = async (url: string): Promise<void> => {
   try {
-    const response = await del(url); // Replace with your API endpoint
+    await del(url); // Replace with your API endpoint
   } catch (error) {
     console.error(error); // Handle request errors
     throw error; // Re-throw the error to be caught in the calling code

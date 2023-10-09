@@ -1,12 +1,19 @@
-import React from 'react';
-import { Box, VStack, Heading, Button, useToast, Select, Input, FormControl, FormLabel } from '@chakra-ui/react';
-import { Formik, Field, Form } from 'formik';
+import { Box, VStack, Heading, Button, useToast, Select, Input, FormControl, FormLabel, InputProps } from '@chakra-ui/react';
+import { Formik, Field, Form, FieldInputProps, FormikHelpers } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
 import { addBeneficiaryAsync } from '../thunks/beneficiaryThunk';
 import { useNavigate } from 'react-router-dom';
 import { selectProfile } from '../slice/profileSlice';
 import { Beneficiary } from '../thunks/beneficiaryThunk';
-const CustomInput = ({ field, form, label, ...props }) => (
+import { AppDispatch } from '../store';
+
+//@ts-ignore
+interface CustomInputProps {
+  field: FieldInputProps<any>;
+  label: string;
+}
+
+const CustomInput: React.FC<CustomInputProps & InputProps> = ({ field, label, ...props }) => (
   <FormControl>
     <FormLabel>{label}</FormLabel>
     <Input {...field} {...props} />
@@ -33,15 +40,18 @@ const relationOptions = [
 
 const AddBeneficiary = () => {
   const toast = useToast();
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
-  const profile = useSelector(selectProfile);
+  const {data} = useSelector(selectProfile);
 
-  const handleSubmit = async (values: Beneficiary, { resetForm }) => {
+  const handleSubmit = async (values: Beneficiary, { resetForm }: FormikHelpers<Beneficiary>) => {
     try {
-      // Dispatch the action to add the beneficiary
-      await dispatch(addBeneficiaryAsync({userData: values, grantor_id: profile?.data.uuid_pk})).unwrap();
-
+      if(data?.uuid_pk)
+        // Dispatch the action to add the beneficiary
+        await dispatch(addBeneficiaryAsync({userData: values, grantor_id: data.uuid_pk})).unwrap();
+      else {
+        throw new Error(`Profile not loaded`)
+      }
       // Reset form fields after successful submission
       resetForm();
 

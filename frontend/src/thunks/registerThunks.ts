@@ -1,5 +1,4 @@
 // registrationThunks.ts
-
 import { createAsyncThunk, SerializedError } from '@reduxjs/toolkit';
 import { postData } from '../helpers/fetchData';
 
@@ -10,9 +9,9 @@ export interface ApiResponse {
 
 // Define your registration data type here
 export interface RegistrationData {
-    firstname: string | '';
-    lastname: string | '';
-    middlename: string | '';
+    first_name: string | '';
+    last_name: string | '';
+    middle_name: string | '';
     username: string | '';
     email: string | '';
     phone_number: string | '';

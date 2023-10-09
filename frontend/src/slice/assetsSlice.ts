@@ -1,5 +1,5 @@
 // import { AddAssetsApiResponse } from './../thunks/assetsThunk';
-import { createSlice, PayloadAction, SerializedError } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { fetchAssetsAsync, Asset, addAssetsAsync } from '../thunks/assetsThunk';
 
 interface AssetState {
@@ -49,19 +49,6 @@ const assetSlice = createSlice({
         state.loading = false;
         state.error = action.error?.message || 'Failed to fetch assets.';
       })
-      // .addCase(fetchAssetsAsync.pending, (state) => {
-      //   state.loading = true;
-      //   state.error = null;
-      // })
-      // .addCase(fetchAssetsAsync.fulfilled, (state, action: PayloadAction<Asset[]>) => {
-      //   state.loading = false;
-      //   state.assets = action.payload;
-      // })
-      // .addCase(fetchAssetsAsync.rejected, (state, action) => {
-      //   // Handling the rejected action and setting the error accordingly
-      //   state.loading = false;
-      //   state.error = action.error?.message || 'Failed to fetch assets.';
-      // });
   },
 });
 

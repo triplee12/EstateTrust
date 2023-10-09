@@ -1,4 +1,3 @@
-import React from 'react'
 import NotFoundImg from '../assets/images/page-not-found-3385471.png'
 import { Box, Container, Image } from '@chakra-ui/react'
 
