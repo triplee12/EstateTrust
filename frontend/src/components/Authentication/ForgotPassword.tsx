@@ -11,9 +11,9 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react'
 
-type ForgotPasswordFormInputs = {
-  email: string
-}
+// type ForgotPasswordFormInputs = {
+//   email: string
+// }
 
 export default function ForgotPasswordForm() {
   return (

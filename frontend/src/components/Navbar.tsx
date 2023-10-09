@@ -1,15 +1,15 @@
+import React from 'react'
 import {
   Box,
   Flex,
   Avatar,
-  Text,
   Button,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
   MenuDivider,
-  useDisclosure,
+  // useDisclosure,
   useColorModeValue,
   Stack,
   useColorMode,
@@ -24,9 +24,10 @@ import { selectProfile } from '../slice/profileSlice'
 import { logoutAsync } from '../thunks/authenticationThunk'
 import { useNavigate } from 'react-router-dom'
 import Logo from '../assets/images/house-lock.png'
-
+import { AppDispatch } from '../store'
 interface Props {
   isLoggedIn: boolean;
+  children: React.ReactNode;
 }
 
 const NavLink = (props: Props) => {
@@ -51,8 +52,8 @@ const NavLink = (props: Props) => {
 
 export default function Nav() {
   const { colorMode, toggleColorMode } = useColorMode();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const dispatch = useDispatch();
+  // const { isOpen, onOpen, onClose } = useDisclosure();
+  const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const auth = useSelector((selectAuth));
   const profile = useSelector((selectProfile));

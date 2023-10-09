@@ -20,16 +20,16 @@ import {
   FormErrorMessage,
 } from '@chakra-ui/react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
-import { Formik, Field, Form } from 'formik';
+import { Formik, Field, Form, FieldProps } from 'formik';
 import * as Yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
 import { registerAsync, RegistrationData } from '../../thunks/registerThunks'// Adjust the import path based on your project structure
 import { registerAuth, clearError } from '../../slice/registerSlice';
 import { useNavigate } from 'react-router-dom';
-
+import {AppDispatch} from '../../store'
 
 const SignupCard = () => {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const regState = useSelector(registerAuth);
@@ -127,8 +127,8 @@ const SignupCard = () => {
                   )}
                 <HStack spacing={4}>
                   <Field name="first_name">
-                    {({ field, meta }) => (
-                      <FormControl id="first_name" isInvalid={meta.touched && meta.error}>
+                    {({ field, meta }: FieldProps) => (
+                      <FormControl id="first_name" isInvalid={!!(meta.touched && meta.error)}>
                         <FormLabel>First Name</FormLabel>
                         <Input {...field} type="text" />
                       <FormErrorMessage>{meta.error}</FormErrorMessage>
@@ -136,8 +136,8 @@ const SignupCard = () => {
                     )}
                   </Field>
                   <Field name="last_name">
-                    {({ field, meta }) => (
-                      <FormControl id="last_name" isInvalid={meta.touched && meta.error}>
+                    {({ field, meta }: FieldProps) => (
+                      <FormControl id="last_name" isInvalid={!!(meta.touched && meta.error)}>
                         <FormLabel>Last Name</FormLabel>
                         <Input {...field} type="text" />
                         <FormErrorMessage>{meta.error}</FormErrorMessage>
@@ -145,8 +145,8 @@ const SignupCard = () => {
                     )}
                   </Field>
                   <Field name="middle_name">
-                    {({ field, meta }) => (
-                      <FormControl id="middle_name" isInvalid={meta.touched && meta.error}>
+                    {({ field, meta }: FieldProps) => (
+                      <FormControl id="middle_name" isInvalid={!!(meta.touched && meta.error)}>
                         <FormLabel>Middle Name</FormLabel>
                         <Input {...field} type="text" />
                       <FormErrorMessage>{meta.error}</FormErrorMessage>
@@ -156,8 +156,8 @@ const SignupCard = () => {
                 </HStack>
 
                 <Field name="username">
-                  {({ field, meta }) => (
-                    <FormControl id="username" isInvalid={meta.touched && meta.error}>
+                  {({ field, meta }: FieldProps) => (
+                    <FormControl id="username" isInvalid={!!(meta.touched && meta.error)}>
                       <FormLabel>Username</FormLabel>
                       <Input {...field} type="text" />
                       <FormErrorMessage>{meta.error}</FormErrorMessage>
@@ -166,8 +166,8 @@ const SignupCard = () => {
                 </Field>
 
                 <Field name="email">
-                  {({ field, meta }) => (
-                    <FormControl id="email" isInvalid={meta.touched && meta.error}>
+                  {({ field, meta }: FieldProps) => (
+                    <FormControl id="email" isInvalid={!!(meta.touched && meta.error)}>
                       <FormLabel>Email address</FormLabel>
                       <Input {...field} type="email" />
                       <FormErrorMessage>{meta.error}</FormErrorMessage>
@@ -176,8 +176,8 @@ const SignupCard = () => {
                 </Field>
 
                 <Field name="phone_number">
-                  {({ field, meta }) => (
-                    <FormControl id="phone_number" isInvalid={meta.touched && meta.error}>
+                  {({ field, meta }: FieldProps) => (
+                    <FormControl id="phone_number" isInvalid={!!(meta.touched && meta.error)}>
                       <FormLabel>Phone Number</FormLabel>
                       <Input {...field} type="tel" />
                       <FormErrorMessage>{meta.error}</FormErrorMessage>
@@ -186,8 +186,8 @@ const SignupCard = () => {
                 </Field>
 
                 <Field name="date_of_birth">
-                  {({ field, meta }) => (
-                    <FormControl id="date_of_birth" isInvalid={meta.touched && meta.error}>
+                  {({ field, meta }: FieldProps) => (
+                    <FormControl id="date_of_birth" isInvalid={!!(meta.touched && meta.error)}>
                       <FormLabel>Date of Birth</FormLabel>
                       <Input {...field} type="date" />
                       <FormErrorMessage>{meta.error}</FormErrorMessage>
@@ -196,8 +196,8 @@ const SignupCard = () => {
                 </Field>
 
                 <Field name="gender">
-                  {({ field, meta }) => (
-                    <FormControl id="gender" isInvalid={meta.touched && meta.error}>
+                  {({ field, meta }: FieldProps) => (
+                    <FormControl id="gender" isInvalid={!!(meta.touched && meta.error)}>
                       <FormLabel>Gender</FormLabel>
                       <Select {...field} placeholder="Select gender">
                         <option value="male">Male</option>
@@ -210,8 +210,8 @@ const SignupCard = () => {
                 </Field>
 
                 <Field name="password">
-                  {({ field, meta }) => (
-                    <FormControl id="password" isInvalid={meta.touched && meta.error}>
+                  {({ field, meta }: FieldProps) => (
+                    <FormControl id="password" isInvalid={!!(meta.touched && meta.error)}>
                       <FormLabel>Password</FormLabel>
                       <InputGroup>
                         <Input {...field} type={showPassword ? 'text' : 'password'} autoComplete='on' />

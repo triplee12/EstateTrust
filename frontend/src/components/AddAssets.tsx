@@ -1,17 +1,20 @@
-import React from 'react';
-import { Box, VStack, Heading, FormControl, FormLabel, Input, Select, Button, useToast, FormHelperText, FormErrorMessage } from '@chakra-ui/react';
+import { Box, VStack, Heading, FormControl, FormLabel, Input, Select, Button, useToast } from '@chakra-ui/react';
 import { useFormik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
 import { addAssetsAsync } from '../thunks/assetsThunk';
 import { selectProfile } from '../slice/profileSlice';
 import { useNavigate } from 'react-router-dom';
 import { Asset } from '../thunks/assetsThunk';
+import { AddBeneficiaryApiResponse } from '../thunks/beneficiaryThunk';
+import { AppDispatch } from "../store"
+
+
 
 const AddAssets = () => {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const toast = useToast();
   const navigate = useNavigate();
-  const profile = useSelector(selectProfile);
+  const {data} = useSelector(selectProfile);
 
   const formik = useFormik({
     initialValues: {
@@ -23,8 +26,12 @@ const AddAssets = () => {
     },
     onSubmit: async (values:Asset) => {
       try {
+        if (data?.uuid_pk)
         // Dispatch the action to add assets
-        await dispatch(addAssetsAsync({userData: values, grantor_id: profile.data?.uuid_pk})).unwrap();
+        await dispatch(addAssetsAsync({userData: values, grantor_id: data?.uuid_pk})).unwrap();
+        else {
+          throw new Error("Failed to add assets")
+        }
 
         // Reset form fields after successful submission
         formik.resetForm();
@@ -90,7 +97,7 @@ const AddAssets = () => {
               {...formik.getFieldProps('will_to')}
             >
               <option value="" disabled>Select Beneficiary</option>
-              {profile.data?.beneficiaries.map((item) => (
+              {data?.beneficiaries.map((item: AddBeneficiaryApiResponse) => (
                 <option key={item.uuid_pk} value={item.uuid_pk}>{item.first_name}</option>
               ))}
             </Select>

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import { useFormik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -18,15 +18,17 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
-import {addTrusteeAsync} from '../thunks/trusteeThunk';
+import {addTrusteeAsync, Trustee} from '../thunks/trusteeThunk';
 import { selectProfile } from '../slice/profileSlice';
 import { useNavigate } from 'react-router-dom';
+import {AppDispatch} from '../store';
+
 
 const AddTrustee = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const toast = useToast();
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const profile = useSelector(selectProfile);
 
   const formik = useFormik({
@@ -40,9 +42,11 @@ const AddTrustee = () => {
       password: '',
       relation: '',
       note: '',
+      added_by: "",
     },
-    onSubmit: async (values) => {
+    onSubmit: async (values: Trustee) => {
       try{
+        if (profile.data?.uuid_pk)
         await dispatch(addTrusteeAsync({userData:values, grantorId: profile.data?.uuid_pk})).unwrap(); // Assuming you have an action like addTrusteeAsync
               // Reset form fields after successful submission
         formik.resetForm();
@@ -70,7 +74,7 @@ const AddTrustee = () => {
     },
   });
 
-  const { handleSubmit, handleChange, handleBlur, values, touched, errors } = formik;
+  const { handleSubmit, handleChange, handleBlur, values } = formik;
 
   return (
     <Flex

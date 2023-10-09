@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosR
 
 // Create an Axios instance with default configurations
 const api: AxiosInstance = axios.create({
-  baseURL: 'https://bba7-197-210-85-57.ngrok-free.app/api/v1', // Replace with your API base URL
+  baseURL: 'https://f391-105-112-208-193.ngrok-free.app/api/v1', // Replace with your API base URL
   // timeout: 5000, // Set a timeout for requests (optional)
   // withCredentials: true,
   headers: {

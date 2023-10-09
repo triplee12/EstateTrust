@@ -1,28 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Tr,
   Th,
   Td,
   Box,
-  Flex,
-  Spacer,
   VStack,
   Heading,
-  Text,
   HStack,
   Table,
   Thead,
   Tbody,
-  Button,
   IconButton,
-  Tooltip,
   useToast,
-  useDisclosure,
-  useBreakpointValue,
+  // useDisclosure,
+  // useBreakpointValue,
   useColorModeValue,
 } from '@chakra-ui/react';
-import { HamburgerIcon, DeleteIcon, ArrowUpIcon } from '@chakra-ui/icons';
-import { Link, useNavigate } from 'react-router-dom';
+import { DeleteIcon, ArrowUpIcon } from '@chakra-ui/icons';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectProfile } from '../slice/profileSlice';
 import { selectAuth } from '../slice/authenticationSlice';
@@ -32,17 +27,21 @@ import { deleteAssetsAsync } from '../thunks/assetsThunk';
 import { deleteBeneficiaryAsync } from '../thunks/beneficiaryThunk';
 import { deleteTrusteeAsync } from '../thunks/trusteeThunk';
 import { deleteMonetaryAsync } from '../thunks/monetaryThunk';
+import { AddMonetaryApiResponse } from '../thunks/monetaryThunk';
+import {AddAssetsApiResponse} from '../thunks/assetsThunk';
+import { AddTrusteeApiResponse} from '../thunks/trusteeThunk';
+import {AppDispatch} from '../store'
 import Sidebar from './SideBar';
 
 
 const Dashboard = () => {
   const [assets, setAssets] = useState([]);
-  const isDrawer = useBreakpointValue({ base: true, lg: false });
-  const dispatch = useDispatch();
+  // const isDrawer = useBreakpointValue({ base: true, lg: false });
+  const dispatch: AppDispatch = useDispatch();
   const auth = useSelector(selectAuth);
-  const profile = useSelector(selectProfile);
+  const {data} = useSelector(selectProfile);
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  // const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -52,18 +51,20 @@ const Dashboard = () => {
   const deleteAsset = async (deleteType: string, id: string) => {
     // Make API call to delete the asset with the given id
     try {
-      // Your API call logic goes here
-      if (deleteType === 'physical') {
-        await dispatch(deleteAssetsAsync({grantor_id: profile.data?.uuid_pk, asset_id: id})).unwrap();
-      }
-      else if (deleteType === 'monetary') {
-        await dispatch(deleteMonetaryAsync({grantor_id: profile.data?.uuid_pk, asset_id: id})).unwrap();
-      }
-      else if (deleteType === 'trustee') {
-        await dispatch(deleteTrusteeAsync({grantor_id: profile.data?.uuid_pk, trustee_id: id})).unwrap();
-      }
-      else if (deleteType === 'beneficiary') {
-        await dispatch(deleteBeneficiaryAsync({grantor_id: profile.data?.uuid_pk, bene_id: id})).unwrap();
+      if (data?.uuid_pk) {
+        // Your API call logic goes here
+        if (deleteType === 'physical') {
+          await dispatch(deleteAssetsAsync({grantor_id: data?.uuid_pk, asset_id: id})).unwrap();
+        }
+        else if (deleteType === 'monetary') {
+          await dispatch(deleteMonetaryAsync({grantor_id: data?.uuid_pk, asset_id: id})).unwrap();
+        }
+        else if (deleteType === 'trustee') {
+          await dispatch(deleteTrusteeAsync({grantor_id: data?.uuid_pk, trustee_id: id})).unwrap();
+        }
+        else if (deleteType === 'beneficiary') {
+          await dispatch(deleteBeneficiaryAsync({grantor_id: data?.uuid_pk, bene_id: id})).unwrap();
+        }
       }
 
       toast({
@@ -72,6 +73,8 @@ const Dashboard = () => {
         duration: 5000,
         isClosable: true,
       });
+
+      navigate('/dashboard');
 
     } catch (error) {
       console.error('Error deleting asset:', error);
@@ -99,15 +102,20 @@ const Dashboard = () => {
 
   useEffect(() =>{
     try {
+      if (auth.id)
       dispatch(fetchProfileData(auth.id)).unwrap();
+      else {
+        throw new Error("No id")
+      }
     } catch (error) {
       console.log(error);
     }
   }, [auth.id, dispatch]);
 
   useEffect(() => {
-    setAssets(profile?.data?.assets)
-  }, [profile]);
+    if(data?.assets)
+    setAssets(data?.assets);
+  }, [data]);
 
   return (
     <>
@@ -142,18 +150,18 @@ const Dashboard = () => {
               </Tr>
             </Thead>
             <Tbody>
-              {assets.map((asset) => (
-                <Tr key={asset.id}>
+              {assets.map((asset: AddAssetsApiResponse) => (
+                <Tr key={asset.uuid_pk}>
                   <Td>{asset.name}</Td>
                   <Td>{asset.location}</Td>
-                  <Td>{findFirstNameById(asset.will_to, profile.data?.beneficiaries)}</Td>
+                  <Td>{data?.beneficiaries ? findFirstNameById(asset.will_to, data.beneficiaries) : 'Loading...'}</Td>
                   {/* <Td>{asset.documents}</Td> */}
                   <Td>
                     <IconButton
                       icon={<ArrowUpIcon />}
                       colorScheme="red"
                       variant="outline"
-                      onClick={() => deleteAsset(asset.id)}
+                      onClick={() => deleteAsset('physical', asset.uuid_pk)}
                       aria-label='Delete Asset'
                     />
                   </Td>
@@ -195,17 +203,17 @@ const Dashboard = () => {
               </Tr>
             </Thead>
             <Tbody>
-              {profile.data?.monetaries.map((money) => (
+              {data?.monetaries.map((money: AddMonetaryApiResponse) => (
                 <Tr key={money.uuid_pk}>
                   <Td>{money.bank_name}</Td>
                   <Td>{money.amount}</Td>
-                  <Td>{findFirstNameById(money.will_to, profile.data?.beneficiaries)}</Td>
+                  <Td>{findFirstNameById(money.will_to, data?.beneficiaries)}</Td>
                   <Td>
                     <IconButton
                       icon={<ArrowUpIcon />}
                       colorScheme="red"
                       variant="outline"
-                      onClick={() => deleteAsset(asset.id)}
+                      onClick={() => deleteAsset('monetary', money.uuid_pk)}
                       aria-label='Delete Asset'
                     />
                   </Td>
@@ -214,7 +222,7 @@ const Dashboard = () => {
                       icon={<DeleteIcon />}
                       colorScheme="red"
                       variant="outline"
-                      onClick={() => deleteAsset('monetary', asset.id)}
+                      onClick={() => deleteAsset('monetary', money.uuid_pk)}
                       aria-label='Delete Asset'
                       isDisabled={isTrustee}
                     />
@@ -249,7 +257,7 @@ const Dashboard = () => {
               </Tr>
             </Thead>
             <Tbody >
-              {profile.data?.executors.map((trustee) => (
+              {data?.executors.map((trustee: AddTrusteeApiResponse) => (
                 <Tr key={trustee.uuid_pk}>
                   <Td>{trustee.first_name}</Td>
                   <Td>{trustee.last_name}</Td>
@@ -291,7 +299,7 @@ const Dashboard = () => {
               </Tr>
             </Thead>
             <Tbody>
-              {profile.data?.beneficiaries.map((item) => (
+              {data?.beneficiaries.map((item: AddBeneficiaryApiResponse) => (
                 <Tr key={item.uuid_pk}>
                   <Td>{item.first_name}</Td>
                   <Td>{item.last_name}</Td>

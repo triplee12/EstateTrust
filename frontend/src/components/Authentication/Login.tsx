@@ -1,11 +1,9 @@
-import React from 'react';
 import {
   Flex,
   Box,
   FormControl,
   FormLabel,
   Input,
-  Checkbox,
   Stack,
   Button,
   Heading,
@@ -14,7 +12,6 @@ import {
   Select,
   useColorModeValue,
   HStack,
-  Spinner,
 } from '@chakra-ui/react';
 import { Formik, Form, Field, ErrorMessage } from 'formik'; // Import Formik components
 import * as Yup from 'yup'; // Import Yup for validation
@@ -23,6 +20,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { loginAsync, LoginData } from '../../thunks/authenticationThunk';
 import { selectAuth, clearError } from '../../slice/authenticationSlice';
 import { AppDispatch } from '../../store';
+
+
+
 
 export default function Login() {
   const navigate = useNavigate();
@@ -98,7 +98,6 @@ export default function Login() {
                     <ErrorMessage
                       name="username"
                       component="div"
-                      style={{ color: '#BF360C', marginTop: '0.25rem'}}
                     />
                   </FormControl>
                   <FormControl id="account_type" isRequired>
@@ -111,7 +110,6 @@ export default function Login() {
                     <ErrorMessage
                       name="account_type"
                       component="div"
-                      style={{ color: '#BF360C', marginTop: '0.25rem'}}
                     />
                   </FormControl>
 
@@ -126,7 +124,6 @@ export default function Login() {
                     <ErrorMessage
                       name="password"
                       component="div"
-                      style={{ color: '#BF360C', marginTop: '0.25rem'}}
                     />
                   </FormControl>
                   <Stack
