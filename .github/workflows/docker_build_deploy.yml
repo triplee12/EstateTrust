@@ -55,12 +55,12 @@ jobs:
         run: pip install -r requirements.txt
       - name: Create Database and User
         run: |
-          psql -U ${{ secrets.POSTGRES_USER }} --password ${{ secrets.POSTGRES_PASSWORD }} -h postgres -c "CREATE DATABASE ${{ secrets.DB_NAME }}_test;"
-          psql -U ${{ secrets.POSTGRES_USER }} --password ${{ secrets.POSTGRES_PASSWORD }} -h postgres -c "CREATE USER ${{ secrets.POSTGRES_USER }} WITH PASSWORD '${{ secrets.POSTGRES_PASSWORD }}';"
-          psql -U ${{ secrets.POSTGRES_USER }} --password ${{ secrets.POSTGRES_PASSWORD }} -h postgres -c "GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.DB_NAME }}_test TO ${{ secrets.POSTGRES_USER }};"
+          psql -U ${{ secrets.POSTGRES_USER }} --password ${{ secrets.POSTGRES_PASSWORD }} -c "CREATE DATABASE ${{ secrets.DB_NAME }}_test;"
+          psql -U ${{ secrets.POSTGRES_USER }} --password ${{ secrets.POSTGRES_PASSWORD }} -c "CREATE USER ${{ secrets.POSTGRES_USER }} WITH PASSWORD '${{ secrets.POSTGRES_PASSWORD }}';"
+          psql -U ${{ secrets.POSTGRES_USER }} --password ${{ secrets.POSTGRES_PASSWORD }} -c "GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.DB_NAME }}_test TO ${{ secrets.POSTGRES_USER }};"
       - name: Clean up
         run: |
-          psql -U ${{ secrets.POSTGRES_USER }} --password ${{ secrets.POSTGRES_PASSWORD }} -h postgres -c "ALTER USER ${{ secrets.POSTGRES_USER }} CREATEDB;"
+          psql -U ${{ secrets.POSTGRES_USER }} --password ${{ secrets.POSTGRES_PASSWORD }} -c "ALTER USER ${{ secrets.POSTGRES_USER }} CREATEDB;"
       - name: Install Pytest and Run Tests
         run: |
           pip install pytest
