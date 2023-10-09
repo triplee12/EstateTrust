@@ -37,7 +37,7 @@ jobs:
         ports:
           - 5432:5432
         run: |
-          psql -e POSTGRES_PASSWORD=${{ POSTGRES_PASSWORD }} on "docker run"
+          docker run -e POSTGRES_PASSWORD=${{ POSTGRES_PASSWORD }}
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
