@@ -27,6 +27,9 @@ jobs:
       AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
       AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
       AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      POSTGRES_DB: ${{secrets.DB_NAME}}_test
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
     services:
       postgres:
         image: postgres
@@ -36,8 +39,6 @@ jobs:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
         ports:
           - 5432:5432
-        run: |
-          docker run -e POSTGRES_PASSWORD=${{ POSTGRES_PASSWORD }}
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -55,6 +56,14 @@ jobs:
         run: python3 -m pip install --upgrade pip
       - name: Install Project Dependencies
         run: pip install -r requirements.txt
+      # - name: Create Database and User
+      #   run: |
+      #     psql -U ${{ secrets.POSTGRES_USER }} --password ${{ secrets.POSTGRES_PASSWORD }} -c "CREATE DATABASE ${{ secrets.DB_NAME }}_test;"
+      #     psql -U ${{ secrets.POSTGRES_USER }} --password ${{ secrets.POSTGRES_PASSWORD }} -c "CREATE USER ${{ secrets.POSTGRES_USER }} WITH PASSWORD '${{ secrets.POSTGRES_PASSWORD }}';"
+      #     psql -U ${{ secrets.POSTGRES_USER }} --password ${{ secrets.POSTGRES_PASSWORD }} -c "GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.DB_NAME }}_test TO ${{ secrets.POSTGRES_USER }};"
+      # - name: Clean up
+      #   run: |
+      #     psql -U ${{ secrets.POSTGRES_USER }} --password ${{ secrets.POSTGRES_PASSWORD }} -c "ALTER USER ${{ secrets.POSTGRES_USER }} CREATEDB;"
       - name: Install Pytest and Run Tests
         run: |
           pip install pytest

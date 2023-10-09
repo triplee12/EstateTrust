@@ -1,4 +1,4 @@
-version: '3.1'
+version: '3'
 services:
   api:
     image: triplee1/estatetrustv1
@@ -11,10 +11,6 @@ services:
       - ./.env
   postgres:
     image: postgres
-    env:
-      - POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-      - POSTGRES_DB: ${{ secrets.DB_NAME }}
-      - POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
     env_file:
       - ./.env
     volumes:
