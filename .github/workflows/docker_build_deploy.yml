@@ -69,7 +69,7 @@ jobs:
           pip install pytest
           pytest -W ignore::DeprecationWarning -W ignore::UserWarning -vv -s
       - name: Setting Up Docker Hub
-        uses: docker/login-action@v1
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
         with:
           username: ${{ secrets.DOCKER_USER_NAME }}
           password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
